@@ -1,0 +1,255 @@
+================================================================================
+ ADDING A NEW CONTENT TYPE: "Basic Page"
+================================================================================
+
+Goal
+----
+Create a new content type called "Basic Page" with the following fields:
+
+    - title       (text)
+    - subtitle    (text)
+    - image       (uploaded image)
+    - body        (long text / rich content)
+    - url_alias   (auto-generated: the title turned into a plain ASCII slug,
+                   spaces replaced with dashes, e.g.
+                   "My First Page" -> "my-first-page")
+
+This project is a Django + Django REST Framework backend (app: `api`).
+Below are all the steps, in order, to add the content type end to end.
+
+--------------------------------------------------------------------------------
+ STEP 0 - Install Pillow (required for ImageField)
+--------------------------------------------------------------------------------
+Django's ImageField needs the Pillow library to validate/process images.
+
+1. Add Pillow to requirements.txt:
+
+       Pillow
+
+2. Install it:
+
+       pip install Pillow
+
+   (Inside Docker: rebuild the image so requirements.txt is reinstalled.)
+
+--------------------------------------------------------------------------------
+ STEP 1 - Configure media (uploaded files) settings
+--------------------------------------------------------------------------------
+Uploaded images need a place to live. The project currently only configures
+STATIC files, so add MEDIA settings to backend/settings.py.
+
+Add near the STATIC_URL / STATIC_ROOT block:
+
+       # Media (user-uploaded files, e.g. Basic Page images)
+       MEDIA_URL = "media/"
+       MEDIA_ROOT = BASE_DIR / "media"
+
+--------------------------------------------------------------------------------
+ STEP 2 - Create the model
+--------------------------------------------------------------------------------
+Edit api/models.py and add the BasicPage model. The url_alias is filled
+automatically by overriding save() and using Django's slugify(), which
+converts the title to a plain ASCII string and replaces spaces with dashes.
+
+    from django.db import models
+    from django.utils.text import slugify
+
+
+    class BasicPage(models.Model):
+        title = models.CharField(max_length=200)
+        subtitle = models.CharField(max_length=300, blank=True)
+        image = models.ImageField(upload_to="basic_pages/", blank=True, null=True)
+        body = models.TextField()
+        # Filled automatically from the title; unique so two pages can't collide.
+        url_alias = models.SlugField(max_length=255, unique=True, blank=True)
+        created_at = models.DateTimeField(auto_now_add=True)
+        updated_at = models.DateTimeField(auto_now=True)
+
+        def save(self, *args, **kwargs):
+            # slugify() lower-cases, strips accents to ASCII, and turns
+            # spaces (and other separators) into dashes:
+            #   "My First Page" -> "my-first-page"
+            base = slugify(self.title)
+            alias = base
+            counter = 1
+            # Guarantee uniqueness by appending -2, -3, ... if needed.
+            qs = BasicPage.objects.exclude(pk=self.pk)
+            while qs.filter(url_alias=alias).exists():
+                counter += 1
+                alias = f"{base}-{counter}"
+            self.url_alias = alias
+            super().save(*args, **kwargs)
+
+        def __str__(self):
+            return self.title
+
+Notes:
+  - slugify() already does the "plain ASCII + spaces to dashes" transform.
+  - The while-loop keeps url_alias unique (optional but recommended).
+  - If you want the alias to NEVER change after creation, only recompute it
+    when self.pk is None (i.e. on first save).
+
+--------------------------------------------------------------------------------
+ STEP 3 - Create and run the migration
+--------------------------------------------------------------------------------
+       python manage.py makemigrations api
+       python manage.py migrate
+
+   (Inside Docker, run these inside the container, e.g.
+    `docker compose exec <service> python manage.py makemigrations api`.)
+
+--------------------------------------------------------------------------------
+ STEP 4 - Add the serializer
+--------------------------------------------------------------------------------
+Edit api/serializers.py and add:
+
+    from .models import Note, BasicPage
+
+
+    class BasicPageSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = BasicPage
+            fields = [
+                "id",
+                "title",
+                "subtitle",
+                "image",
+                "body",
+                "url_alias",
+                "created_at",
+                "updated_at",
+            ]
+            # url_alias is generated server-side, never set by the client.
+            extra_kwargs = {"url_alias": {"read_only": True}}
+
+--------------------------------------------------------------------------------
+ STEP 5 - Add the views (API endpoints)
+--------------------------------------------------------------------------------
+Edit api/views.py and add list/create + retrieve/update/delete views.
+
+    from .serializers import UserSerializer, NoteSerializer, BasicPageSerializer
+    from .models import Note, BasicPage
+    from rest_framework.permissions import IsAuthenticated, AllowAny
+
+
+    class BasicPageListCreate(generics.ListCreateAPIView):
+        queryset = BasicPage.objects.all()
+        serializer_class = BasicPageSerializer
+        # Anyone can read; only authenticated users can create.
+        # Adjust to your needs.
+        permission_classes = [IsAuthenticated]
+
+
+    class BasicPageDetail(generics.RetrieveUpdateDestroyAPIView):
+        queryset = BasicPage.objects.all()
+        serializer_class = BasicPageSerializer
+        permission_classes = [IsAuthenticated]
+        # Look the page up by its url_alias instead of the numeric id.
+        lookup_field = "url_alias"
+
+--------------------------------------------------------------------------------
+ STEP 6 - Wire up the URLs
+--------------------------------------------------------------------------------
+Edit api/urls.py and add the routes:
+
+    from django.urls import path
+    from . import views
+
+    urlpatterns = [
+        path("notes/", views.NoteListCreate.as_view(), name="note-list"),
+        path("notes/delete/<int:pk>/", views.NoteDelete.as_view(), name="delete-note"),
+
+        # Basic Page endpoints
+        path("basic-pages/", views.BasicPageListCreate.as_view(),
+             name="basicpage-list"),
+        path("basic-pages/<slug:url_alias>/", views.BasicPageDetail.as_view(),
+             name="basicpage-detail"),
+    ]
+
+Resulting API (mounted under /api/ by backend/urls.py):
+
+    GET    /api/basic-pages/                 list all pages
+    POST   /api/basic-pages/                 create a page (multipart/form-data
+                                             because it includes an image)
+    GET    /api/basic-pages/<url_alias>/     fetch one page by its alias
+    PUT    /api/basic-pages/<url_alias>/     update a page
+    PATCH  /api/basic-pages/<url_alias>/     partial update
+    DELETE /api/basic-pages/<url_alias>/     delete a page
+
+--------------------------------------------------------------------------------
+ STEP 7 - Register in the Django admin (optional but handy)
+--------------------------------------------------------------------------------
+Edit api/admin.py:
+
+    from django.contrib import admin
+    from .models import BasicPage
+
+
+    @admin.register(BasicPage)
+    class BasicPageAdmin(admin.ModelAdmin):
+        list_display = ("title", "url_alias", "created_at")
+        # url_alias is auto-generated, so show it read-only.
+        readonly_fields = ("url_alias", "created_at", "updated_at")
+        search_fields = ("title", "subtitle", "body")
+
+--------------------------------------------------------------------------------
+ STEP 8 - Serve uploaded images during local development
+--------------------------------------------------------------------------------
+In DEBUG mode, let Django serve files from MEDIA_ROOT. Edit backend/urls.py:
+
+    from django.conf import settings
+    from django.conf.urls.static import static
+
+    urlpatterns = [
+        # ... existing patterns ...
+    ]
+
+    if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+In PRODUCTION, do NOT rely on the line above. Either:
+  (a) let nginx serve /media/ directly, or
+  (b) let WhiteNoise/Django serve it.
+For (a), add a location block to deploy/nginx/tb-backend.conf:
+
+    location /media/ {
+        alias /var/www/django/tb/backend/backend/media/;
+    }
+
+Make sure MEDIA_ROOT above matches that alias path, and that nginx has
+read access to the directory.
+
+--------------------------------------------------------------------------------
+ STEP 9 - Test it
+--------------------------------------------------------------------------------
+1. Create a page (multipart form, because of the image upload):
+
+       curl -X POST https://<host>/api/basic-pages/ \
+         -H "Authorization: Bearer <ACCESS_TOKEN>" \
+         -F "title=My First Page" \
+         -F "subtitle=Welcome" \
+         -F "body=Hello world" \
+         -F "image=@/path/to/picture.jpg"
+
+   Expect the response to include:
+       "url_alias": "my-first-page"
+
+2. Fetch it back:
+
+       curl https://<host>/api/basic-pages/my-first-page/ \
+         -H "Authorization: Bearer <ACCESS_TOKEN>"
+
+--------------------------------------------------------------------------------
+ SUMMARY OF FILES TOUCHED
+--------------------------------------------------------------------------------
+    requirements.txt        -> add Pillow
+    backend/settings.py     -> MEDIA_URL, MEDIA_ROOT
+    api/models.py           -> BasicPage model (+ auto slug in save())
+    api/serializers.py      -> BasicPageSerializer
+    api/views.py            -> BasicPageListCreate, BasicPageDetail
+    api/urls.py             -> /basic-pages/ routes
+    api/admin.py            -> register BasicPage (optional)
+    backend/urls.py         -> serve media in DEBUG
+    deploy/nginx/...        -> /media/ location block (production)
+    + run makemigrations / migrate
+================================================================================

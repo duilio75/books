@@ -1,0 +1,81 @@
+# nginx reverse proxy for the tb-backend container (managed alongside Certbot).
+#
+# Hosts:
+#   * traveling-books.eu      (443) -> proxies to the app (gunicorn)
+#   * www.traveling-books.eu  (443) -> 301 redirect to the apex
+#   * either host on port 80        -> 301 redirect to https://apex
+#
+# The www redirect over https needs www on the certificate, so expand it:
+#   sudo certbot --nginx --expand -d traveling-books.eu -d www.traveling-books.eu
+#   sudo nginx -t && sudo systemctl reload nginx
+
+upstream tb_backend {
+    server 127.0.0.1:8000;
+    keepalive 32;
+}
+
+# Canonical host: serve the app over https.
+server {
+    server_name traveling-books.eu;
+
+    location / {
+        proxy_pass http://tb_backend;
+
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+
+        proxy_connect_timeout 30s;
+        proxy_read_timeout    60s;
+        client_max_body_size  10m;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/traveling-books.eu/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/traveling-books.eu/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+# www over https: redirect everything to the canonical apex host.
+server {
+    server_name www.traveling-books.eu;
+
+    location / {
+        return 301 https://traveling-books.eu$request_uri;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/traveling-books.eu/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/traveling-books.eu/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+# Port 80 for both hosts: redirect to the canonical https apex.
+server {
+    if ($host = www.traveling-books.eu) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = traveling-books.eu) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name traveling-books.eu www.traveling-books.eu;
+    return 301 https://traveling-books.eu$request_uri;
+
+
+
+
+}
+

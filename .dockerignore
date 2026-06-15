@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtualenvs
+.env/
+venv/
+.venv/
+
+# Secrets & local config (passed in at runtime instead)
+.env
+
+# Local databases
+*.sqlite3
+
+# VCS & editor
+.git/
+.gitignore
+.idea/
+.vscode/
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
