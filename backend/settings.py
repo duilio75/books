@@ -35,29 +35,18 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ("1", "true", "yes")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
-# HTTPS / TLS hardening.
-# TLS is terminated at nginx, which forwards X-Forwarded-Proto. This header
-# lets Django know the original request was https (so request.is_secure(),
-# secure cookies and CSRF all behave correctly behind the proxy).
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-# Django 4+ checks the Origin header against this list for unsafe requests
-# (admin login, POSTs). Trust each non-local host over https.
 CSRF_TRUSTED_ORIGINS = [
     f"https://{host.strip()}"
     for host in ALLOWED_HOSTS
     if host.strip() not in ("127.0.0.1", "localhost")
 ]
 
-# Toggle the strict flags off (USE_HTTPS=False) when testing locally over
-# plain HTTP, otherwise secure cookies and the SSL redirect lock you out.
 USE_HTTPS = os.getenv("USE_HTTPS", "True").lower() in ("1", "true", "yes")
 if USE_HTTPS:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    # HSTS: tell browsers to use https for 1 year. Start small (e.g. 3600)
-    # if you want to verify the cert before committing to the long max-age.
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
