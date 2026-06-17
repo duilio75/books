@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'tinymce',
     'webpack_boilerplate',
+    'menu',
 ]
 
 MIDDLEWARE = [

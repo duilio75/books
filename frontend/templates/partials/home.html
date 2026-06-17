@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% load menu_tags %}
 
 {% block title %}My amazing blog{% endblock %}
 {% block header %}
-    <p>Header block</p>
+    {% render_menu "main" %}
 {% endblock %}
 {% block main %}
     <p>Main block</p>

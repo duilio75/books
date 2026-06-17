@@ -12,6 +12,9 @@ class BasicPage(models.Model):
         body = HTMLField()
         # Filled automatically from the title unless set explicitly; unique so two pages can't collide.
         url_alias = models.SlugField(max_length=255, unique=True, blank=True)
+        content_blocks = models.ManyToManyField(
+            "ContentBlock", through="BasicPageContentBlock", related_name="pages", blank=True
+        )
         created_at = models.DateTimeField(auto_now_add=True)
         updated_at = models.DateTimeField(auto_now=True)
 
@@ -44,6 +47,19 @@ class ContentBlock(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class BasicPageContentBlock(models.Model):
+    page = models.ForeignKey(BasicPage, on_delete=models.CASCADE)
+    content_block = models.ForeignKey(ContentBlock, on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order"]
+        unique_together = ("page", "content_block")
+
+    def __str__(self):
+        return f"{self.page} -> {self.content_block}"
 
 
 class Gallery(models.Model):
