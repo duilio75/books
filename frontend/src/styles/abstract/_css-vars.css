@@ -1,0 +1,31 @@
+body {
+  font-family: var(--body-font);
+  line-height: 1.5rem;
+  font-size: 1rem;
+}
+
+:root {
+  --primary: #eb0578;
+  --secondary: #ffc805;
+  --dark: #000000;
+  --light: #ffeeb3;
+  --border: #f00078;
+  --bold-color: #212736;
+  --content-bg: #fbf1e2;
+  --text-color: #383549;
+  --black-50: rgba(4, 4, 4, 0.5);
+  --black-40: rgba(4, 4, 4, 0.4);
+  --black-30: rgba(4, 4, 4, 0.3);
+  --black-20: rgba(4, 4, 4, 0.2);
+  --black-60: rgba(4, 4, 4, 0.6);
+  --form-bg: #f9fafb;
+  --form-border: #d1d5db;
+  --verde: #199e54d4;
+  --linea: #ffc108f5;
+  --block-bg: #ffeeb3;
+  --block-bg-shadow: #ffc80594;
+  --primary-20: rgb(235, 5, 120, 0.2);
+  --primary-10: rgb(235, 5, 120, 0.1);
+  --body-font: sans-serif;
+  --heading-font: "Amsi Pro Condensed Bold", "Titillium Web", sans-serif;
+}
