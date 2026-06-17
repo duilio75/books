@@ -10,7 +10,7 @@ class BasicPage(models.Model):
         subtitle = models.CharField(max_length=300, blank=True)
         image = models.ImageField(upload_to="basic_pages/", blank=True, null=True)
         body = HTMLField()
-        # Filled automatically from the title; unique so two pages can't collide.
+        # Filled automatically from the title unless set explicitly; unique so two pages can't collide.
         url_alias = models.SlugField(max_length=255, unique=True, blank=True)
         created_at = models.DateTimeField(auto_now_add=True)
         updated_at = models.DateTimeField(auto_now=True)
@@ -19,7 +19,7 @@ class BasicPage(models.Model):
             # slugify() lower-cases, strips accents to ASCII, and turns
             # spaces (and other separators) into dashes:
             #   "My First Page" -> "my-first-page"
-            base = slugify(self.title)
+            base = slugify(self.url_alias) if self.url_alias else slugify(self.title)
             alias = base
             counter = 1
             # Guarantee uniqueness by appending -2, -3, ... if needed.
@@ -34,6 +34,25 @@ class BasicPage(models.Model):
             return self.title
 
 
+
+
+class ContentBlock(models.Model):
+    title = models.CharField(max_length=200)
+    sub_title = models.CharField(max_length=300, blank=True)
+    image = models.ImageField(upload_to="content_blocks/", blank=True, null=True)
+    body = HTMLField()
+
+    def __str__(self):
+        return self.title
+
+
+class Gallery(models.Model):
+    title = models.CharField(max_length=200)
+    alt = models.CharField(max_length=200, blank=True)
+    image = models.ImageField(upload_to="gallery/")
+
+    def __str__(self):
+        return self.title
 
 
 class Note(models.Model):
