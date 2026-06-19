@@ -54,6 +54,8 @@
     "webpack-merge": "^6.0.1"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "aos": "^2.3.4",
     "core-js": "^3.37.0"
   }
 }

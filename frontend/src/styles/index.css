@@ -1,6 +1,11 @@
 /*import tailwindcss and disable automatic source detection*/
 @import "tailwindcss";
 
+/* Self-hosted Inter font (weights used across the templates) */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/700.css";
+
 /* Additional styles */
 @import "./additional-styles/utility-patterns.css" layer(components);
 @import "./additional-styles/theme.css";
