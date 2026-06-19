@@ -1,13 +1,7 @@
-{% load webpack_loader static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}My amazing site{% endblock %}</title>
-    {% stylesheet_pack 'app' %}
-</head>
-<body>
+<div hidden="">
+  <!--$-->
+  <!--/$-->
+</div>
 <div class="flex min-h-screen flex-col overflow-hidden supports-[overflow:clip]:overflow-clip">
   <header class="fixed top-2 z-30 w-full md:top-6">
     <div class="mx-auto max-w-6xl px-4 sm:px-6">
@@ -40,7 +34,7 @@
   <main class="grow">
     <section class="relative">
       <div class="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform" aria-hidden="true">
-        <img alt="Stripes" width="768" height="438" decoding="async" data-nimg="1" class="max-w-none" style="color:transparent" src="{% static 'vendors/images/stripes.svg' %}" />
+        <img alt="Stripes" width="768" height="438" decoding="async" data-nimg="1" class="max-w-none" style="color:transparent" src="/_next/static/media/stripes.a73db9b3.svg" />
       </div>
       <div class="pointer-events-none absolute -top-32 left-1/2 ml-[580px] -translate-x-1/2" aria-hidden="true">
         <div class="h-80 w-80 rounded-full bg-linear-to-tr from-blue-500 opacity-50 blur-[160px]">
@@ -59,12 +53,12 @@
           <div class="pb-12 text-center md:pb-16">
             <div class="mb-6 border-y [border-image:linear-gradient(to_right,transparent,--theme(--color-slate-300/.8),transparent)1]" data-aos="zoom-y-out">
               <div class="-mx-0.5 flex justify-center -space-x-3">
-                <img alt="Avatar 01" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" src="{% static 'vendors/images/avatar-01.jpg' %}" />
-                <img alt="Avatar 02" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" src="{% static 'vendors/images/avatar-02.jpg' %}" />
-                <img alt="Avatar 03" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" src="{% static 'vendors/images/avatar-03.jpg' %}" />
-                <img alt="Avatar 04" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" src="{% static 'vendors/images/avatar-04.jpg' %}" />
-                <img alt="Avatar 05" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" src="{% static 'vendors/images/avatar-05.jpg' %}" />
-                <img alt="Avatar 06" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" src="{% static 'vendors/images/avatar-06.jpg' %}" />
+                <img alt="Avatar 01" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-01.8d07fd5b.jpg&w=32&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-01.8d07fd5b.jpg&w=64&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-01.8d07fd5b.jpg&w=64&q=75" />
+                <img alt="Avatar 01" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-02.a9558266.jpg&w=32&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-02.a9558266.jpg&w=64&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-02.a9558266.jpg&w=64&q=75" />
+                <img alt="Avatar 02" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-03.0059f59a.jpg&w=32&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-03.0059f59a.jpg&w=64&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-03.0059f59a.jpg&w=64&q=75" />
+                <img alt="Avatar 03" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-04.583b4a6c.jpg&w=32&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-04.583b4a6c.jpg&w=64&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-04.583b4a6c.jpg&w=64&q=75" />
+                <img alt="Avatar 04" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-05.a2eb8ae3.jpg&w=32&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-05.a2eb8ae3.jpg&w=64&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-05.a2eb8ae3.jpg&w=64&q=75" />
+                <img alt="Avatar 05" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="box-content rounded-full border-2 border-gray-50" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-06.b017ac5d.jpg&w=32&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-06.b017ac5d.jpg&w=64&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar-06.b017ac5d.jpg&w=64&q=75" />
               </div>
             </div>
             <h1 class="mb-6 border-y text-5xl font-bold [border-image:linear-gradient(to_right,transparent,--theme(--color-slate-300/.8),transparent)1] md:text-6xl" data-aos="zoom-y-out" data-aos-delay="150">
@@ -226,7 +220,7 @@
             <div class="absolute before:absolute before:-inset-3 before:animate-[spin_3s_linear_infinite] before:rounded-full before:border before:border-transparent before:[mask-composite:exclude_!important] before:[mask:linear-gradient(white_0_0)_padding-box,_linear-gradient(white_0_0)] before:[background:conic-gradient(from_180deg,transparent,var(--color-blue-500))_border-box]">
               <div class="animate-[breath_8s_ease-in-out_infinite_both]">
                 <div class="flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
-                  <img alt="Logo 01" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="{% static 'vendors/images/logo-01.svg' %}" />
+                  <img alt="Logo 01" loading="lazy" width="32" height="32" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="/_next/static/media/logo-01.6aed9654.svg" />
                 </div>
               </div>
             </div>
@@ -235,56 +229,56 @@
                 <div class="absolute -translate-x-[136px]">
                   <div class="animate-[breath_7s_ease-in-out_3s_infinite_both]">
                     <div class="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
-                      <img alt="Logo 02" loading="lazy" width="23" height="22" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="{% static 'vendors/images/logo-02.svg' %}" />
+                      <img alt="Logo 02" loading="lazy" width="23" height="22" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="/_next/static/media/logo-02.a6d449de.svg" />
                     </div>
                   </div>
                 </div>
                 <div class="absolute translate-x-[136px]">
                   <div class="animate-[breath_7s_ease-in-out_3.5s_infinite_both]">
                     <div class="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
-                      <img alt="Logo 03" loading="lazy" width="22" height="22" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="{% static 'vendors/images/logo-03.svg' %}" />
+                      <img alt="Logo 03" loading="lazy" width="22" height="22" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="/_next/static/media/logo-03.d9967659.svg" />
                     </div>
                   </div>
                 </div>
                 <div class="absolute -translate-x-[216px] -translate-y-[82px]">
                   <div class="animate-[breath_6s_ease-in-out_3.5s_infinite_both]">
                     <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
-                      <img alt="Logo 04" loading="lazy" width="24" height="22" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="{% static 'vendors/images/logo-04.svg' %}" />
+                      <img alt="Logo 04" loading="lazy" width="24" height="22" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="/_next/static/media/logo-04.281d7788.svg" />
                     </div>
                   </div>
                 </div>
                 <div class="absolute -translate-y-[82px] translate-x-[216px]">
                   <div class="animate-[breath_6s_ease-in-out_1.5s_infinite_both]">
                     <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
-                      <img alt="Logo 05" loading="lazy" width="25" height="25" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="{% static 'vendors/images/logo-05.svg' %}" />
+                      <img alt="Logo 05" loading="lazy" width="25" height="25" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="/_next/static/media/logo-05.f0fd82a6.svg" />
                     </div>
                   </div>
                 </div>
                 <div class="absolute translate-x-[216px] translate-y-[82px]">
                   <div class="animate-[breath_6s_ease-in-out_2s_infinite_both]">
                     <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
-                      <img alt="Logo 06" loading="lazy" width="20" height="18" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="{% static 'vendors/images/logo-06.svg' %}" />
+                      <img alt="Logo 06" loading="lazy" width="20" height="18" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="/_next/static/media/logo-06.377cf463.svg" />
                     </div>
                   </div>
                 </div>
                 <div class="absolute -translate-x-[216px] translate-y-[82px]">
                   <div class="animate-[breath_6s_ease-in-out_2.5s_infinite_both]">
                     <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
-                      <img alt="Logo 07" loading="lazy" width="25" height="25" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="{% static 'vendors/images/logo-07.svg' %}" />
+                      <img alt="Logo 07" loading="lazy" width="25" height="25" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="/_next/static/media/logo-07.ec87da39.svg" />
                     </div>
                   </div>
                 </div>
                 <div class="absolute -translate-x-[292px] opacity-40">
                   <div class="animate-[breath_6s_ease-in-out_2s_infinite_both]">
                     <div class="flex h-12 w-12 items-center justify-center rounded-full border border-gray-200/60 bg-white shadow-lg">
-                      <img alt="Logo 08" loading="lazy" width="20" height="20" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="{% static 'vendors/images/logo-08.svg' %}" />
+                      <img alt="Logo 08" loading="lazy" width="20" height="20" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="/_next/static/media/logo-08.dbd52b8e.svg" />
                     </div>
                   </div>
                 </div>
                 <div class="absolute translate-x-[292px] opacity-40">
                   <div class="animate-[breath_6s_ease-in-out_4s_infinite_both]">
                     <div class="flex h-12 w-12 items-center justify-center rounded-full border border-gray-200/60 bg-white shadow-lg">
-                      <img alt="Logo 09" loading="lazy" width="21" height="13" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="{% static 'vendors/images/logo-09.svg' %}" />
+                      <img alt="Logo 09" loading="lazy" width="21" height="13" decoding="async" data-nimg="1" class="relative" style="color:transparent" src="/_next/static/media/logo-09.d114d504.svg" />
                     </div>
                   </div>
                 </div>
@@ -305,14 +299,14 @@
           <div class="pb-16 md:pb-20" data-aos="zoom-y-out">
             <div class="text-center">
               <div class="relative inline-flex rounded-full before:absolute before:inset-0 before:-z-10 before:scale-[.85] before:animate-[pulse_4s_cubic-bezier(.4,0,.6,1)_infinite] before:bg-linear-to-b before:from-blue-900 before:to-sky-700/50 before:blur-3xl after:absolute after:inset-0 after:rounded-[inherit] after:[background:radial-gradient(closest-side,var(--color-blue-500),transparent)]">
-                <img alt="Planet" loading="lazy" width="400" height="400" decoding="async" data-nimg="1" class="rounded-full bg-gray-900" style="color:transparent" src="{% static 'vendors/images/planet.png' %}" />
+                <img alt="Planet" loading="lazy" width="400" height="400" decoding="async" data-nimg="1" class="rounded-full bg-gray-900" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet.5a75d973.png&w=640&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet.5a75d973.png&w=828&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet.5a75d973.png&w=828&q=75" />
                 <div class="pointer-events-none" aria-hidden="true">
-                  <img alt="Planet decoration" loading="lazy" width="789" height="755" decoding="async" data-nimg="1" class="absolute -right-64 -top-20 z-10 max-w-none" style="color:transparent" src="{% static 'vendors/images/planet-overlay.svg' %}" />
+                  <img alt="Planet decoration" loading="lazy" width="789" height="755" decoding="async" data-nimg="1" class="absolute -right-64 -top-20 z-10 max-w-none" style="color:transparent" src="/_next/static/media/planet-overlay.beb47a1a.svg" />
                   <div>
-                    <img alt="Tag 01" loading="lazy" width="253" height="56" decoding="async" data-nimg="1" class="absolute -left-28 top-16 z-10 animate-[float_4s_ease-in-out_infinite_both] opacity-80 transition-opacity duration-500" style="color:transparent" src="{% static 'vendors/images/planet-tag-01.png' %}" />
-                    <img alt="Tag 02" loading="lazy" width="241" height="56" decoding="async" data-nimg="1" class="absolute left-56 top-7 z-10 animate-[float_4s_ease-in-out_infinite_1s_both] opacity-30 transition-opacity duration-500" style="color:transparent" src="{% static 'vendors/images/planet-tag-02.png' %}" />
-                    <img alt="Tag 03" loading="lazy" width="243" height="56" decoding="async" data-nimg="1" class="absolute -left-20 bottom-24 z-10 animate-[float_4s_ease-in-out_infinite_2s_both] opacity-25 transition-opacity duration-500" style="color:transparent" src="{% static 'vendors/images/planet-tag-03.png' %}" />
-                    <img alt="Tag 04" loading="lazy" width="251" height="56" decoding="async" data-nimg="1" class="absolute bottom-32 left-64 z-10 animate-[float_4s_ease-in-out_infinite_3s_both] opacity-80 transition-opacity duration-500" style="color:transparent" src="{% static 'vendors/images/planet-tag-04.png' %}" />
+                    <img alt="Tag 01" loading="lazy" width="253" height="56" decoding="async" data-nimg="1" class="absolute -left-28 top-16 z-10 animate-[float_4s_ease-in-out_infinite_both] opacity-80 transition-opacity duration-500" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-01.686b520d.png&w=256&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-01.686b520d.png&w=640&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-01.686b520d.png&w=640&q=75" />
+                    <img alt="Tag 02" loading="lazy" width="241" height="56" decoding="async" data-nimg="1" class="absolute left-56 top-7 z-10 animate-[float_4s_ease-in-out_infinite_1s_both] opacity-30 transition-opacity duration-500" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-02.05208b78.png&w=256&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-02.05208b78.png&w=640&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-02.05208b78.png&w=640&q=75" />
+                    <img alt="Tag 03" loading="lazy" width="243" height="56" decoding="async" data-nimg="1" class="absolute -left-20 bottom-24 z-10 animate-[float_4s_ease-in-out_infinite_2s_both] opacity-25 transition-opacity duration-500" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-03.5a866ddb.png&w=256&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-03.5a866ddb.png&w=640&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-03.5a866ddb.png&w=640&q=75" />
+                    <img alt="Tag 04" loading="lazy" width="251" height="56" decoding="async" data-nimg="1" class="absolute bottom-32 left-64 z-10 animate-[float_4s_ease-in-out_infinite_3s_both] opacity-80 transition-opacity duration-500" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-04.5d27a16c.png&w=256&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-04.5d27a16c.png&w=640&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fplanet-tag-04.5d27a16c.png&w=640&q=75" />
                   </div>
                 </div>
               </div>
@@ -419,7 +413,7 @@
                 <path d="M22.7976 -0.000136375L39.9352 23.4746L33.4178 31.7234L13.7686 11.4275L22.7976 -0.000136375ZM9.34947 17.0206L26.4871 40.4953L19.9697 48.7441L0.320491 28.4482L9.34947 17.0206Z" fill="#D1D5DB">
                 </path>
               </svg>
-              <img alt="Large testimonial" loading="lazy" width="48" height="48" decoding="async" data-nimg="1" class="rounded-full" style="color:transparent" src="{% static 'vendors/images/large-testimonial.jpg' %}" />
+              <img alt="Large testimonial" loading="lazy" width="48" height="48" decoding="async" data-nimg="1" class="rounded-full" style="color:transparent" srcset="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flarge-testimonial.891876d2.jpg&w=48&q=75 1x, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flarge-testimonial.891876d2.jpg&w=96&q=75 2x" src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flarge-testimonial.891876d2.jpg&w=96&q=75" />
             </div>
             <p class="text-2xl font-bold text-gray-900">
               “Simple has simplified my life in more ways than one. From managing my sites to
@@ -453,7 +447,7 @@
             </div>
           </div>
           <div class="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform" aria-hidden="true">
-            <img alt="Stripes" loading="lazy" width="768" height="432" decoding="async" data-nimg="1" class="max-w-none" style="color:transparent" src="{% static 'vendors/images/stripes-dark.svg' %}" />
+            <img alt="Stripes" loading="lazy" width="768" height="432" decoding="async" data-nimg="1" class="max-w-none" style="color:transparent" src="/_next/static/media/stripes-dark.7b571818.svg" />
           </div>
           <div class="px-4 py-12 md:px-12 md:py-20">
             <h2 class="mb-6 border-y text-3xl font-bold text-gray-200 [border-image:linear-gradient(to_right,transparent,--theme(--color-slate-700/.7),transparent)1] md:mb-12 md:text-4xl">
@@ -626,6 +620,3 @@
     </div>
   </footer>
 </div>
-{% javascript_pack 'app' %}
-</body>
-</html>
