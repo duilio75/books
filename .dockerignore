@@ -9,11 +9,22 @@ __pycache__/
 venv/
 .venv/
 
+# Node (frontend is built in its own stage; never copy local deps/build)
+node_modules/
+frontend/node_modules/
+frontend/build/
+
 # Secrets & local config (passed in at runtime instead)
 .env
 
 # Local databases
 *.sqlite3
+
+# User uploads live in a persistent volume, not the image
+media/
+
+# Media backup archives (created by `make backup-media`)
+backup/
 
 # VCS & editor
 .git/

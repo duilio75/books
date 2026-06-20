@@ -19,3 +19,6 @@ Thumbs.db
 *.log
 **/__pycache__/
 media/
+
+# Media volume snapshots
+backup/

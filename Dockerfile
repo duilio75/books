@@ -1,5 +1,17 @@
 # syntax=docker/dockerfile:1
 
+# ---- Frontend build stage ----
+# Compile CSS/JS with webpack into frontend/build (incl. manifest.json)
+FROM node:22-slim AS frontend
+WORKDIR /frontend
+# Install deps first so this layer is cached across source changes
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+# Build the assets
+COPY frontend/ ./
+RUN npm run build
+
+# ---- Python base ----
 FROM python:3.13-slim AS base
 
 # Keep Python lean and predictable inside containers
@@ -22,12 +34,18 @@ RUN pip install -r requirements.txt
 # Copy the project
 COPY . .
 
-# Collect static assets (e.g. Django admin) into STATIC_ROOT
+# Bring in the compiled frontend assets from the node stage so that
+# collectstatic and django-webpack-loader can find them at frontend/build
+COPY --from=frontend /frontend/build ./frontend/build
+
+# Collect static assets (Django admin + webpack output) into STATIC_ROOT
 RUN python manage.py collectstatic --noinput || true
 
-# Run as an unprivileged user (with a real home so gunicorn's control server works)
+# Run as an unprivileged user (with a real home so gunicorn's control server works).
+# Create the media mount point up front so the volume inherits app ownership and is writable.
 RUN addgroup --system app \
     && adduser --system --ingroup app --home /home/app app \
+    && mkdir -p /app/media \
     && chown -R app:app /app /home/app
 USER app
 
