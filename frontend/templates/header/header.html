@@ -1,7 +1,7 @@
   {% load menu_tags %}
   <header class="fixed top-2 z-30 w-full md:top-6">
     <div class="mx-auto max-w-6xl px-4 sm:px-6">
-      <div class="relative flex h-14 items-center justify-between gap-3 rounded-2xl bg-white/90 px-3 shadow-lg shadow-black/[0.03] backdrop-blur-xs before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:border before:border-transparent before:[background:linear-gradient(var(--color-gray-100),var(--color-gray-200))_border-box] before:[mask-composite:exclude_!important] before:[mask:linear-gradient(white_0_0)_padding-box,_linear-gradient(white_0_0)]">
+      <div class="relative flex h-14 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white/90 px-3 shadow-lg shadow-black/[0.03] backdrop-blur-xs">
         <div class="flex flex-1 items-center">
           <a class="inline-flex" aria-label="Cruip" href="/">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28">
@@ -10,9 +10,10 @@
               <path class="fill-blue-300" fill-rule="evenodd" d="M0 12.947C.513 6.033 6.033.513 12.947 0v5.015a7.932 7.932 0 0 1-7.932 7.932H0Zm22.984 2.106h5.015C27.486 21.967 21.966 27.487 15.052 28v-5.015a7.932 7.932 0 0 1 7.932-7.932Z" clip-rule="evenodd">
               </path>
             </svg>
-          </a>
+          </a>&nbsp;&nbsp;&nbsp;
+          {% render_menu "main" %}
         </div>
-        {% render_menu "main" %}
+       
         <ul class="flex flex-1 items-center justify-end gap-3">
           <li>
             <a class="btn-sm bg-white text-gray-800 shadow-sm hover:bg-gray-50" href="/signin">

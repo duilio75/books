@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+{% block header %}
+    <p>Header block</p>
+{% endblock %}
+{% block main %}
+        <h1>{{ book.title }}</h1>
+        <p class="subtitle">{{ book.author }}</p>
+        {% if book.cover_url %}<img class="hero" src="{{ book.cover_url }}" alt="{{ book.title }}">{% endif %}
+        <div class="body">{{ book.description|safe }}</div>
+{% endblock %}
+{% block footer %}
+    <p>Footer block</p>
+{% endblock %}

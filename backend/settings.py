@@ -67,11 +67,16 @@ SIMPLE_JWT = {
 }
 
 
-# Minimal TinyMCE config: basic formatting + the source-code (< >) button.
+# Minimal TinyMCE config: basic formatting + the source-code (< >) button,
+# plus image and table support.
 TINYMCE_DEFAULT_CONFIG = {
-    "height": 400,
-    "plugins": "link lists code",
-    "toolbar": "bold italic | bullist numlist | link | code",
+    "height": 500,
+    "width": "100%",
+    "plugins": "link lists code image table",
+    "toolbar": "bold italic | bullist numlist | link | image table | code",
+    "images_upload_url": "/api/tinymce/upload-image/",
+    "automatic_uploads": True,
+    "image_advtab": True,
 }
 
 
@@ -92,6 +97,7 @@ INSTALLED_APPS = [
     'tinymce',
     'webpack_boilerplate',
     'menu',
+    'book',
 ]
 
 MIDDLEWARE = [
