@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Check your email{% endblock %}
+{% block main %}
+<main class="grow">
+  <section class="relative">
+    <div class="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform" aria-hidden="true">
+      <div class="h-80 w-[600px] rounded-full bg-linear-to-tr from-blue-500 opacity-30 blur-[160px]"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <div class="py-12 md:py-20">
+        <div class="mx-auto max-w-sm text-center">
+
+          <div class="mb-6 flex justify-center">
+            <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-50">
+              <svg class="fill-blue-500" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+                <path d="M2 4a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4Zm2 0v.5l10 7 10-7V4H4Zm20 3.117-9.496 6.647a1 1 0 0 1-1.008 0L4 7.117V20h20V7.117Z"/>
+              </svg>
+            </div>
+          </div>
+
+          <h1 class="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">Check your inbox</h1>
+          <p class="mb-8 text-gray-600">
+            We've sent you a confirmation email. Click the link inside to activate your account.
+          </p>
+
+          <div class="rounded-2xl border border-gray-200 bg-white/90 px-8 py-6 shadow-lg shadow-black/[0.03] backdrop-blur-xs text-sm text-gray-500">
+            Didn't receive the email? Check your spam folder or
+            <a href="/signup" class="font-medium text-blue-500 hover:underline">try again</a>.
+          </div>
+
+          <div class="mt-6">
+            <a href="/signin" class="text-sm font-medium text-gray-500 hover:text-gray-700">
+              Back to sign in
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

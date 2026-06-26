@@ -15,6 +15,18 @@
         </div>
        
         <ul class="flex flex-1 items-center justify-end gap-3">
+          {% if user.is_authenticated %}
+          <li>
+            <a class="btn-sm bg-white text-gray-800 shadow-sm hover:bg-gray-50" href="/dashboard">
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a class="btn-sm bg-gray-800 text-gray-200 shadow-sm hover:bg-gray-900" href="/logout">
+              Sign out
+            </a>
+          </li>
+          {% else %}
           <li>
             <a class="btn-sm bg-white text-gray-800 shadow-sm hover:bg-gray-50" href="/signin">
               Login
@@ -25,6 +37,7 @@
               Register
             </a>
           </li>
+          {% endif %}
         </ul>
       </div>
     </div>

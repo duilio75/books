@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Create Account{% endblock %}
+{% block main %}
+<main class="grow">
+  <section class="relative">
+    <div class="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform" aria-hidden="true">
+      <div class="h-80 w-[600px] rounded-full bg-linear-to-tr from-blue-500 opacity-30 blur-[160px]"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <div class="py-12 md:py-20">
+
+        <div class="pb-12 text-center">
+          <h1 class="text-4xl font-bold text-gray-900 md:text-5xl">Create your account</h1>
+          <p class="mt-4 text-lg text-gray-600">Join us and access your reserved area.</p>
+        </div>
+
+        <div class="mx-auto max-w-sm">
+          <div class="rounded-2xl border border-gray-200 bg-white/90 px-8 py-10 shadow-lg shadow-black/[0.03] backdrop-blur-xs">
+
+            {% if form.non_field_errors %}
+            <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" novalidate>
+              {% csrf_token %}
+
+              <div class="mb-5">
+                <label class="mb-1 block text-sm font-medium text-gray-700" for="{{ form.username.id_for_label }}">
+                  Username
+                </label>
+                <input
+                  id="{{ form.username.id_for_label }}"
+                  name="{{ form.username.html_name }}"
+                  type="text"
+                  value="{{ form.username.value|default:'' }}"
+                  autocomplete="username"
+                  class="form-input w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {% if form.username.errors %}border-red-400{% endif %}"
+                  placeholder="Choose a username"
+                />
+                {% if form.username.errors %}
+                <p class="mt-1 text-xs text-red-500">{{ form.username.errors|join:", " }}</p>
+                {% endif %}
+              </div>
+
+              <div class="mb-5">
+                <label class="mb-1 block text-sm font-medium text-gray-700" for="{{ form.email.id_for_label }}">
+                  Email
+                </label>
+                <input
+                  id="{{ form.email.id_for_label }}"
+                  name="{{ form.email.html_name }}"
+                  type="email"
+                  value="{{ form.email.value|default:'' }}"
+                  autocomplete="email"
+                  class="form-input w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {% if form.email.errors %}border-red-400{% endif %}"
+                  placeholder="you@example.com"
+                />
+                {% if form.email.errors %}
+                <p class="mt-1 text-xs text-red-500">{{ form.email.errors|join:", " }}</p>
+                {% endif %}
+              </div>
+
+              <div class="mb-5">
+                <label class="mb-1 block text-sm font-medium text-gray-700" for="{{ form.password1.id_for_label }}">
+                  Password
+                </label>
+                <input
+                  id="{{ form.password1.id_for_label }}"
+                  name="{{ form.password1.html_name }}"
+                  type="password"
+                  autocomplete="new-password"
+                  class="form-input w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {% if form.password1.errors %}border-red-400{% endif %}"
+                  placeholder="Create a password"
+                />
+                {% if form.password1.errors %}
+                <p class="mt-1 text-xs text-red-500">{{ form.password1.errors|join:", " }}</p>
+                {% endif %}
+              </div>
+
+              <div class="mb-6">
+                <label class="mb-1 block text-sm font-medium text-gray-700" for="{{ form.password2.id_for_label }}">
+                  Confirm Password
+                </label>
+                <input
+                  id="{{ form.password2.id_for_label }}"
+                  name="{{ form.password2.html_name }}"
+                  type="password"
+                  autocomplete="new-password"
+                  class="form-input w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {% if form.password2.errors %}border-red-400{% endif %}"
+                  placeholder="Repeat your password"
+                />
+                {% if form.password2.errors %}
+                <p class="mt-1 text-xs text-red-500">{{ form.password2.errors|join:", " }}</p>
+                {% endif %}
+              </div>
+
+              <button
+                type="submit"
+                class="btn w-full bg-linear-to-t from-blue-600 to-blue-500 bg-[length:100%_100%] bg-[bottom] text-white shadow-sm hover:bg-[length:100%_150%]"
+              >
+                Create Account
+              </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm text-gray-500">
+              Already have an account?
+              <a href="/signin" class="font-medium text-blue-500 hover:underline">Sign in</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

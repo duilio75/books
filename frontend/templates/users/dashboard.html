@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block main %}
+<main class="grow">
+  <section class="relative">
+    <div class="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform" aria-hidden="true">
+      <div class="h-80 w-[600px] rounded-full bg-linear-to-tr from-blue-500 opacity-30 blur-[160px]"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <div class="py-12 md:py-20">
+
+        <div class="pb-12">
+          <h1 class="text-4xl font-bold text-gray-900 md:text-5xl">
+            Welcome, {{ request.user.username }}
+          </h1>
+          <p class="mt-4 text-lg text-gray-600">You are in your reserved area.</p>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+          <div class="rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-lg shadow-black/[0.03] backdrop-blur-xs">
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50">
+              <svg class="fill-blue-500" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                <path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0Zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 14.5a7.5 7.5 0 0 1-5.478-2.384C5.534 13.938 7.647 13 10 13s4.466.938 5.478 2.116A7.5 7.5 0 0 1 10 17.5Z"/>
+              </svg>
+            </div>
+            <h3 class="mb-1 font-semibold text-gray-900">Profile</h3>
+            <p class="text-sm text-gray-500">{{ request.user.email|default:"No email set" }}</p>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-lg shadow-black/[0.03] backdrop-blur-xs">
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50">
+              <svg class="fill-blue-500" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                <path d="M2 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4Zm2-4a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4V4a4 4 0 0 0-4-4H4Zm1 10a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H5Z"/>
+              </svg>
+            </div>
+            <h3 class="mb-1 font-semibold text-gray-900">My Books</h3>
+            <p class="text-sm text-gray-500">Browse your reading list.</p>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-lg shadow-black/[0.03] backdrop-blur-xs">
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50">
+              <svg class="fill-blue-500" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                <path d="M9 1a1 1 0 1 0-2 0v6a1 1 0 0 0 2 0V1ZM4.572 3.08a1 1 0 0 0-1.144-1.64A7.987 7.987 0 0 0 0 8a8 8 0 0 0 16 0c0-2.72-1.36-5.117-3.428-6.56a1 1 0 1 0-1.144 1.64A5.987 5.987 0 0 1 14 8 6 6 0 1 1 2 8a5.987 5.987 0 0 1 2.572-4.92Z"/>
+              </svg>
+            </div>
+            <h3 class="mb-1 font-semibold text-gray-900">Settings</h3>
+            <p class="text-sm text-gray-500">Manage your account preferences.</p>
+          </div>
+
+        </div>
+
+        <div class="mt-10">
+          <a href="/logout" class="btn-sm bg-gray-100 text-gray-700 shadow-sm hover:bg-gray-200">
+            Sign out
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}
