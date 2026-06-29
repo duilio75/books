@@ -1,0 +1,15 @@
+<h1>Terms & Conditions</h1>
+
+<div>
+  {{ terms.content|linebreaks }}
+</div>
+
+<form method="post">
+  {% csrf_token %}
+  <label>
+    <input type="checkbox" required>
+    I accept the Terms & Conditions
+  </label>
+
+  <button type="submit">Accept</button>
+</form>

@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import RegisterForm, LoginForm
-from .models import EmailVerificationToken
+from .models import EmailVerificationToken, TermsVersion, TermsAcceptance
 
 
 def _send_verification_email(request, user, token_obj):
@@ -78,3 +78,20 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     return render(request, "users/dashboard.html")
+
+
+
+def terms_view(request):
+    latest = TermsVersion.objects.filter(is_active=True).first()
+
+    if request.method == "POST":
+        TermsAcceptance.objects.get_or_create(
+            user=request.user,
+            terms=latest,
+            defaults={
+                "ip_address": request.META.get("REMOTE_ADDR")
+            }
+        )
+        return redirect("/")
+
+    return render(request, "users/terms.html", {"terms": latest})

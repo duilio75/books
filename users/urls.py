@@ -8,4 +8,5 @@ urlpatterns = [
     path("dashboard", views.dashboard_view, name="dashboard"),
     path("verify-email/sent", views.verify_email_sent_view, name="verify_email_sent"),
     path("verify-email/<uuid:token>/", views.verify_email_view, name="verify_email"),
+    path("terms", views.terms_view, name="terms"),
 ]

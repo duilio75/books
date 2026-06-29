@@ -8,7 +8,7 @@
     </div>
 
     <div class="mx-auto max-w-6xl px-4 sm:px-6">
-      <div class="py-12 md:py-20">
+      <div class="py-12 md:py-30">
 
         <div class="pb-12 text-center">
           <h1 class="text-4xl font-bold text-gray-900 md:text-5xl">Create your account</h1>
@@ -64,17 +64,48 @@
               </div>
 
               <div class="mb-5">
-                <label class="mb-1 block text-sm font-medium text-gray-700" for="{{ form.password1.id_for_label }}">
+                <label class="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700" for="{{ form.password1.id_for_label }}">
                   Password
+                  <span class="group relative inline-flex">
+                    <svg class="h-4 w-4 cursor-help text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" tabindex="0" role="img" aria-label="Password requirements">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-64 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs font-normal text-gray-100 opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100">
+                      Your password must:
+                      <ul class="mt-1 list-disc space-y-0.5 pl-4">
+                        <li>be at least 8 characters long</li>
+                        <li>not be too similar to your username or email</li>
+                        <li>not be a commonly used password</li>
+                        <li>not be entirely numeric</li>
+                      </ul>
+                      <span class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-gray-900"></span>
+                    </span>
+                  </span>
                 </label>
-                <input
-                  id="{{ form.password1.id_for_label }}"
-                  name="{{ form.password1.html_name }}"
-                  type="password"
-                  autocomplete="new-password"
-                  class="form-input w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {% if form.password1.errors %}border-red-400{% endif %}"
-                  placeholder="Create a password"
-                />
+                <div class="relative">
+                  <input
+                    id="{{ form.password1.id_for_label }}"
+                    name="{{ form.password1.html_name }}"
+                    type="password"
+                    autocomplete="new-password"
+                    class="form-input w-full rounded-lg border border-gray-200 px-4 py-2.5 pr-11 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {% if form.password1.errors %}border-red-400{% endif %}"
+                    placeholder="Create a password"
+                  />
+                  <button
+                    type="button"
+                    data-password-toggle="{{ form.password1.id_for_label }}"
+                    aria-label="Show password"
+                    class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600 focus:outline-none"
+                  >
+                    <svg class="h-5 w-5" data-icon-show fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    <svg class="hidden h-5 w-5" data-icon-hide fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                  </button>
+                </div>
                 {% if form.password1.errors %}
                 <p class="mt-1 text-xs text-red-500">{{ form.password1.errors|join:", " }}</p>
                 {% endif %}
@@ -84,14 +115,30 @@
                 <label class="mb-1 block text-sm font-medium text-gray-700" for="{{ form.password2.id_for_label }}">
                   Confirm Password
                 </label>
-                <input
-                  id="{{ form.password2.id_for_label }}"
-                  name="{{ form.password2.html_name }}"
-                  type="password"
-                  autocomplete="new-password"
-                  class="form-input w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {% if form.password2.errors %}border-red-400{% endif %}"
-                  placeholder="Repeat your password"
-                />
+                <div class="relative">
+                  <input
+                    id="{{ form.password2.id_for_label }}"
+                    name="{{ form.password2.html_name }}"
+                    type="password"
+                    autocomplete="new-password"
+                    class="form-input w-full rounded-lg border border-gray-200 px-4 py-2.5 pr-11 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 {% if form.password2.errors %}border-red-400{% endif %}"
+                    placeholder="Repeat your password"
+                  />
+                  <button
+                    type="button"
+                    data-password-toggle="{{ form.password2.id_for_label }}"
+                    aria-label="Show password"
+                    class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600 focus:outline-none"
+                  >
+                    <svg class="h-5 w-5" data-icon-show fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    <svg class="hidden h-5 w-5" data-icon-hide fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                  </button>
+                </div>
                 {% if form.password2.errors %}
                 <p class="mt-1 text-xs text-red-500">{{ form.password2.errors|join:", " }}</p>
                 {% endif %}
@@ -116,4 +163,18 @@
     </div>
   </section>
 </main>
+
+<script>
+  document.querySelectorAll('[data-password-toggle]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var input = document.getElementById(btn.dataset.passwordToggle);
+      if (!input) return;
+      var show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      btn.querySelector('[data-icon-show]').classList.toggle('hidden', show);
+      btn.querySelector('[data-icon-hide]').classList.toggle('hidden', !show);
+    });
+  });
+</script>
 {% endblock %}
