@@ -92,6 +92,6 @@ def terms_view(request):
                 "ip_address": request.META.get("REMOTE_ADDR")
             }
         )
-        return redirect("/")
+        return redirect("/dashboard")
 
     return render(request, "users/terms.html", {"terms": latest})
