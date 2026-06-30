@@ -124,7 +124,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'users.middleware.TermsMiddleware'
 ]
 
 ROOT_URLCONF = 'backend.urls'

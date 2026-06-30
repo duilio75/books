@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -77,21 +78,27 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
-    return render(request, "users/dashboard.html")
-
-
-
-def terms_view(request):
     latest = TermsVersion.objects.filter(is_active=True).first()
+    terms_accepted = latest is not None and TermsAcceptance.objects.filter(
+        user=request.user, terms=latest
+    ).exists()
+    return render(request, "users/dashboard.html", {
+        "terms_accepted": terms_accepted,
+        "terms": latest,
+    })
 
-    if request.method == "POST":
+
+@login_required
+def accept_terms_view(request):
+    if request.method != "POST":
+        return redirect("dashboard")
+
+    latest = TermsVersion.objects.filter(is_active=True).first()
+    if latest:
         TermsAcceptance.objects.get_or_create(
             user=request.user,
             terms=latest,
-            defaults={
-                "ip_address": request.META.get("REMOTE_ADDR")
-            }
+            defaults={"ip_address": request.META.get("REMOTE_ADDR")},
         )
-        return redirect("/dashboard")
-
-    return render(request, "users/terms.html", {"terms": latest})
+        messages.success(request, "Thanks for accepting our conditions!")
+    return redirect("dashboard")

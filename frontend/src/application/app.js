@@ -4,16 +4,20 @@ import "../styles/index.css";
 import "aos/dist/aos.css";
 
 // We can import other JS file as we like
-import Jumbotron from "../components/jumbotron";
 import AOS from "aos";
+import $ from "jquery";
+import PasswordToggle from "../components/password-toggle";
 
-window.document.addEventListener("DOMContentLoaded", function () {
-  window.console.log("dom ready");
+$(function () {
+  window.console.log("jquery ready");
 
-  // Find elements and initialize
-  for (const elem of document.querySelectorAll(Jumbotron.selector())) {
-    new Jumbotron(elem);
+  for (const btn of document.querySelectorAll(PasswordToggle.selector())) {
+    new PasswordToggle(btn);
   }
+
+  const termsDialog = document.getElementById('terms-dialog');
+  if (termsDialog) termsDialog.showModal();
+
 
   AOS.init({
     once: true,

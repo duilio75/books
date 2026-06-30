@@ -6,7 +6,7 @@ from .models import TermsVersion, TermsAcceptance
 
 @admin.register(TermsVersion)
 class TermsVersionAdmin(admin.ModelAdmin):
-    list_display = ("version", "is_active", "published_at")
+    list_display = ("title", "version", "is_active", "published_at")
     list_filter = ("is_active", "published_at")
     search_fields = ("version", "content")
     readonly_fields = ("published_at",)
