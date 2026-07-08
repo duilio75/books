@@ -56,6 +56,24 @@ class BookTopic(models.Model):
         return self.topic
 
 
+class BookReview(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    google_volume_id = models.CharField(max_length=50)
+    isbn = models.CharField(max_length=40, blank=True)
+    title = models.CharField(max_length=255)
+    author = models.CharField(max_length=255, blank=True)
+    cover_url = models.CharField(max_length=500, blank=True)
+    rating = models.PositiveSmallIntegerField()  # 1-5
+    review_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.title} — {self.rating}/5"
+
+
 class Source(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="sources")
