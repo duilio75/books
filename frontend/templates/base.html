@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}My amazing site{% endblock title %}</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'vendors/images/favicon.ico' %}">
     {% stylesheet_pack 'app' %}
 </head>
 <body class="font-inter antialiased">
@@ -29,19 +30,6 @@
     </div>
     {% endfor %}
   </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      document.querySelectorAll('.toast-item').forEach(function (el) {
-        requestAnimationFrame(function () {
-          el.classList.remove('translate-y-[-120%]');
-        });
-        setTimeout(function () {
-          el.classList.add('opacity-0', 'translate-y-[-120%]');
-          el.addEventListener('transitionend', function () { el.remove(); });
-        }, 4000);
-      });
-    });
-  </script>
   {% endif %}
   {% block main %}
   {% endblock main %}
