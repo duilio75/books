@@ -8,7 +8,7 @@ from tinymce.models import HTMLField
 class Book(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
-    isbn = models.CharField(max_length=255)
+    volume = models.CharField(max_length=255, unique=True)
     author = models.CharField(max_length=75)
     cover_url = models.CharField(max_length=255)
     description = HTMLField()
@@ -58,8 +58,8 @@ class BookTopic(models.Model):
 
 class BookReview(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    google_volume_id = models.CharField(max_length=50)
-    isbn = models.CharField(max_length=40, blank=True)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="reviews")
+    volume_id = models.CharField(max_length=50)
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255, blank=True)
     cover_url = models.CharField(max_length=500, blank=True)
@@ -72,6 +72,22 @@ class BookReview(models.Model):
 
     def __str__(self):
         return f"{self.title} — {self.rating}/5"
+
+
+class Edition(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="editions")
+    isbn13 = models.CharField(max_length=13, blank=True)
+    isbn10 = models.CharField(max_length=10, blank=True)
+    publisher = models.CharField(max_length=255, blank=True)
+    language = models.CharField(max_length=50, blank=True)
+    format = models.CharField(max_length=100, blank=True)
+    publication_date = models.DateField(blank=True, null=True)
+    page_count = models.PositiveIntegerField(blank=True, null=True)
+    cover_url = models.CharField(max_length=500, blank=True)
+
+    def __str__(self):
+        return f"{self.book.title} ({self.format or self.publisher or self.isbn13})"
 
 
 class Source(models.Model):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, BookLabel, BookTopic, BookReview, Source
+from .models import Book, BookLabel, BookTopic, BookReview, Source, Edition
 
 
 class BookLabelSerializer(serializers.ModelSerializer):
@@ -24,10 +24,10 @@ class BookReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookReview
         fields = [
-            "id", "google_volume_id", "isbn", "title", "author",
+            "id", "book", "volume_id", "title", "author",
             "cover_url", "rating", "review_text", "created_at",
         ]
-        read_only_fields = ["id", "created_at"]
+        read_only_fields = ["id", "book", "created_at"]
 
     def validate_rating(self, value):
         if not 1 <= value <= 5:
@@ -35,17 +35,28 @@ class BookReviewSerializer(serializers.ModelSerializer):
         return value
 
 
+class EditionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Edition
+        fields = [
+            "id", "book", "isbn13", "isbn10", "publisher", "language",
+            "format", "publication_date", "page_count", "cover_url",
+        ]
+        read_only_fields = ["id"]
+
+
 class BookSerializer(serializers.ModelSerializer):
     labels = BookLabelSerializer(many=True, read_only=True)
     topics = BookTopicSerializer(many=True, read_only=True)
     sources = SourceSerializer(many=True, read_only=True)
+    editions = EditionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Book
         fields = [
             "id",
             "title",
-            "isbn",
+            "volume",
             "author",
             "cover_url",
             "description",
@@ -54,4 +65,5 @@ class BookSerializer(serializers.ModelSerializer):
             "labels",
             "topics",
             "sources",
+            "editions",
         ]

@@ -34,10 +34,7 @@ class BookSearch {
       const res = await fetch("/api/books/search/?q=" + encodeURIComponent(query));
       const data = await res.json();
       if (data.error) {
-        const code = data.error.code || res.status;
-        const msg = code === 429
-          ? "API quota exceeded. Please add a Google Books API key or try again later."
-          : (data.error.message || "An error occurred.");
+        const msg = (typeof data.error === "string" ? data.error : data.error.message) || "An error occurred.";
         this.resultsEl.innerHTML = '<p class="col-span-full text-sm text-red-500">' + msg + "</p>";
         return;
       }
@@ -58,13 +55,18 @@ class BookSearch {
     const title = info.title || "Unknown title";
     const authors = info.authors ? info.authors.join(", ") : "";
     const inDb = item._in_db;
+    console.log(info);
     const volumeId = item.id || "";
     const isbn = (info.industryIdentifiers || []).map((x) => x.identifier).join(",");
     const coverUrl = thumb;
     const bookAttr = JSON.stringify({ volumeId, isbn, title, authors, coverUrl }).replace(/"/g, "&quot;");
+    const reviewBtn = '<button type="button" data-book="' + bookAttr + '" class="flex-1 bg-blue-100 py-2 text-center text-xs font-semibold text-gray-600 hover:bg-blue-200">Leave a Review</button>';
     const btn = inDb
-      ? '<a href="/book/' + item._url_alias + '/" class="mt-auto block w-full rounded-b-lg bg-blue-600 py-2 text-center text-xs font-semibold text-white hover:bg-blue-700">View Book</a>'
-      : '<button type="button" data-book="' + bookAttr + '" class="mt-auto block w-full rounded-b-lg bg-blue-100 py-2 text-center text-xs font-semibold text-gray-600 hover:bg-blue-200">Leave a Review</button>';
+      ? '<span class="mt-auto flex flex-col divide-y divide-blue-500 rounded-b-lg overflow-hidden">'
+        + reviewBtn
+        + '<a href="/book/' + item._url_alias + '/" class="flex-1 bg-blue-600 py-2 text-center text-xs font-semibold text-white hover:bg-blue-700">View Book</a>'
+        + "</span>"
+      : '<span class="mt-auto flex rounded-b-lg overflow-hidden">' + reviewBtn + "</span>";
     return '<span class="flex flex-col overflow-hidden rounded-lg border ' + (inDb ? "border-green-400 ring-2 ring-green-300" : "border-gray-200") + ' bg-white shadow-sm">'
       + '<span class="relative">'
       + (thumb
@@ -124,7 +126,7 @@ class BookSearch {
     if (!reviewText) { errEl.textContent = "Please write a review."; return; }
     errEl.textContent = "";
     const payload = {
-      google_volume_id: document.getElementById("rdlg-volume-id").value,
+      volume_id: document.getElementById("rdlg-volume-id").value,
       isbn: document.getElementById("rdlg-isbn").value,
       title: document.getElementById("rdlg-book-title").value,
       author: document.getElementById("rdlg-book-author").value,
