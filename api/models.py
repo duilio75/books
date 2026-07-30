@@ -1,6 +1,10 @@
+from urllib.parse import urljoin
+
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.text import slugify
+from django.utils.html import strip_tags
+from django.utils.text import slugify, Truncator
 from tinymce.models import HTMLField
 
 
@@ -40,10 +44,29 @@ class BasicPage(models.Model):
 
 
 class ContentBlock(models.Model):
+    DESCRIPTION_SHORT_MAX_LENGTH = 160
+
     title = models.CharField(max_length=200)
     sub_title = models.CharField(max_length=300, blank=True)
     image = models.ImageField(upload_to="content_blocks/", blank=True, null=True)
     body = HTMLField()
+
+    @property
+    def description(self):
+        """Plain-text description derived from the rich-text body (tags stripped)."""
+        return strip_tags(self.body)
+
+    @property
+    def description_short(self):
+        """`description` truncated to DESCRIPTION_SHORT_MAX_LENGTH characters, e.g. for meta tags."""
+        return Truncator(self.description).chars(self.DESCRIPTION_SHORT_MAX_LENGTH)
+
+    @property
+    def image_full_url(self):
+        """Absolute URL of `image` (e.g. for og:image), built from settings.SITE_URL."""
+        if not self.image:
+            return ""
+        return urljoin(settings.SITE_URL, self.image.url)
 
     def __str__(self):
         return self.title

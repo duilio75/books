@@ -1,7 +1,10 @@
 import requests
+from django.conf import settings
+from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from rest_framework import generics
+from api.models import ContentBlock
 from common.http import session_with_retries
 from .models import Book
 from .serializers import BookSerializer, BookReviewSerializer
@@ -98,6 +101,27 @@ def book_page_detail(request, url_alias):
         request,
         "partials/book_page.html",
         {"book": book, "reviews": book.reviews.all()},
+    )
+
+
+def home_page_detail(request):
+    """Render the home page, featuring the book with the most reviews
+    and the ContentBlock configured via the DEFAULT_HOME_BLOCK env var.
+    """
+    featured_book = (
+        Book.objects.annotate(review_count=Count("reviews"))
+        .order_by("-review_count")
+        .first()
+    )
+
+    home_block = None
+    if settings.DEFAULT_HOME_BLOCK:
+        home_block = ContentBlock.objects.filter(pk=settings.DEFAULT_HOME_BLOCK).first()
+
+    return render(
+        request,
+        "partials/home.html",
+        {"featured_book": featured_book, "home_block": home_block},
     )
 
 

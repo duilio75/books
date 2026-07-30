@@ -1,15 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView
 from api.views import CreateUserView, basic_page_detail
-from book.views import book_page_detail
+from book.views import book_page_detail, home_page_detail
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="partials/home.html"), name="home"),
+    path("", home_page_detail, name="home"),
     path("admin/", admin.site.urls),
     path("", include("users.urls")),
     path("api/user/register/", CreateUserView.as_view(), name="register"),

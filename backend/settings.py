@@ -42,6 +42,10 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 USE_HTTPS = os.getenv("USE_HTTPS", "True").lower() in ("1", "true", "yes")
+
+# Absolute base URL of the site, used to build full URLs (e.g. og:image) outside
+# of a request/response cycle. Defaults to the first ALLOWED_HOSTS entry.
+SITE_URL = os.getenv("SITE_URL", f"http{'s' if USE_HTTPS else ''}://{ALLOWED_HOSTS[0].strip()}")
 if USE_HTTPS:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
@@ -112,6 +116,9 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() in ("1", "true", "yes
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@example.com")
+
+# Primary key of the ContentBlock (api.models.ContentBlock) featured on the home page.
+DEFAULT_HOME_BLOCK = os.getenv("DEFAULT_HOME_BLOCK")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

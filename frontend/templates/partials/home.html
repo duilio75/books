@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Traveling books Home{% endblock %}
+{% block title %}{{ home_block.title }}{% endblock %}
+{% block meta_site_name %}<meta name="og:site_name" content="traveling books" />{% endblock %}
+{% block meta_type %}<meta name="og:type" content="website" />{% endblock %}
+{% block meta_url %}<meta name="og:url" content="{{ request.build_absolute_uri }}" />{% endblock %}
+{% block meta_title %}<meta name="og:title" content="{{ home_block.title }}" />{% endblock %}
+{% block meta_descri %}<meta name="og:description" content="{{ home_block.description_short }}" />{% endblock %}
+{% block meta_img %}<meta name="og:image" content="{{ home_block.image_full_url }}" />{% endblock %}
 {% block main %}
     <main class="grow">
     <section class="relative">
@@ -35,18 +41,44 @@
               </div>
             </div>
             <h1 class="mb-6 border-y text-5xl font-bold [border-image:linear-gradient(to_right,transparent,--theme(--color-slate-300/.8),transparent)1] md:text-6xl" data-aos="zoom-y-out" data-aos-delay="150">
-              What's the most memorable book<br> you've ever read?
+              {{ home_block.title }}
             </h1>
+            {% if home_block.sub_title %}<p class="mt-2 text-lg text-gray-600">{{ home_block.sub_title }}</p>{% endif %}
             <div class="mx-auto max-w-3xl">
-              <p class="mb-8 text-lg text-gray-700" data-aos="zoom-y-out" data-aos-delay="300">
-                How has this book changed the way you think, decide, communicate, or achieve success?<br> Most people read books and then forget them.<br> But the top 1% read to change something, to start thinking in new ways.
-              </p>
-              {% include "search/search.html" %}
+               <div class="prose mt-4 max-w-none text-gray-600">{{ home_block.body|safe }}</div>
+            </div>
+            <div class="mx-auto max-w-3xl">
+               {% include "search/search.html" %}
             </div>
           </div>
         </div>
       </div>
     </section>
+    {% if featured_book %}
+    <section class="relative">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <div class="pb-12 md:pb-20">
+          <div class="mx-auto max-w-3xl pb-12 text-center md:pb-16">
+            <h2 class="text-3xl font-bold text-gray-900 md:text-4xl">Most reviewed book</h2>
+          </div>
+          <div class="mx-auto flex max-w-3xl flex-col items-center gap-8 rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-lg shadow-black/[0.03] backdrop-blur-xs md:flex-row md:items-start">
+            {% if featured_book.cover_url %}
+            <img class="h-64 w-44 shrink-0 rounded-2xl object-cover shadow-lg shadow-black/[0.03]" src="{{ featured_book.cover_url }}" alt="{{ featured_book.title }}">
+            {% endif %}
+            <div>
+              <h3 class="text-2xl font-bold text-gray-900">{{ featured_book.title }}</h3>
+              <p class="mt-2 text-lg text-gray-600">{{ featured_book.author }}</p>
+              <p class="mt-1 text-sm text-gray-500">{{ featured_book.review_count }} review{{ featured_book.review_count|pluralize }}</p>
+              <div class="prose mt-4 max-w-none text-gray-600">{{ featured_book.description|safe|truncatewords_html:40 }}</div>
+              <a href="{% url 'book-page-detail' featured_book.url_alias %}" class="btn mt-6 inline-flex bg-linear-to-t from-blue-600 to-blue-500 bg-[length:100%_100%] bg-[bottom] text-white shadow-sm hover:bg-[length:100%_150%]">
+                Read more
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endif %}
     <section class="relative before:absolute before:inset-0 before:-z-20 before:bg-gray-900">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <div class="py-12 md:py-20">

@@ -5,6 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}My amazing site{% endblock title %}</title>
+    {% block meta_title %}{% endblock meta_title %}
+    {% block meta_site_name %}{% endblock meta_site_name %}
+    {% block meta_type %}{% endblock meta_type %}
+    {% block meta_url %}{% endblock meta_url %}
+    {% block meta_descri %}{% endblock meta_descri %}
+    {% block meta_img %}{% endblock meta_img %}
     <link rel="icon" type="image/x-icon" href="{% static 'vendors/images/favicon.ico' %}">
     {% stylesheet_pack 'app' %}
 </head>
