@@ -105,13 +105,13 @@ def book_page_detail(request, url_alias):
 
 
 def home_page_detail(request):
-    """Render the home page, featuring the book with the most reviews
+    """Render the home page, featuring the 4 books with the most reviews
     and the ContentBlock configured via the DEFAULT_HOME_BLOCK env var.
     """
-    featured_book = (
+    featured_books = (
         Book.objects.annotate(review_count=Count("reviews"))
-        .order_by("-review_count")
-        .first()
+        .filter(review_count__gt=0)
+        .order_by("-review_count")[:4]
     )
 
     home_block = None
@@ -121,7 +121,7 @@ def home_page_detail(request):
     return render(
         request,
         "partials/home.html",
-        {"featured_book": featured_book, "home_block": home_block},
+        {"featured_books": featured_books, "home_block": home_block},
     )
 
 
