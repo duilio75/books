@@ -22,3 +22,4 @@ media/
 
 # Media volume snapshots
 backup/
+.vscode/launch.json

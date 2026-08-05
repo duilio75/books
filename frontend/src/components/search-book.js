@@ -55,11 +55,12 @@ class BookSearch {
     const title = info.title || "Unknown title";
     const authors = info.authors ? info.authors.join(", ") : "";
     const inDb = item._in_db;
-    console.log(info);
+    const description = info.description || "";
+    //console.log(info);
     const volumeId = item.id || "";
     const isbn = (info.industryIdentifiers || []).map((x) => x.identifier).join(",");
     const coverUrl = thumb;
-    const bookAttr = JSON.stringify({ volumeId, isbn, title, authors, coverUrl }).replace(/"/g, "&quot;");
+    const bookAttr = JSON.stringify({ volumeId, isbn, title, authors, coverUrl, description }).replace(/"/g, "&quot;");
     const reviewBtn = '<button type="button" data-book="' + bookAttr + '" class="flex-1 bg-blue-100 py-2 text-center text-xs font-semibold text-gray-600 hover:bg-blue-200">Leave a Review</button>';
     const btn = inDb
       ? '<span class="mt-auto flex flex-col divide-y divide-blue-500 rounded-b-lg overflow-hidden">'
@@ -97,6 +98,7 @@ class BookSearch {
     document.getElementById("rdlg-isbn").value = book.isbn;
     document.getElementById("rdlg-book-title").value = book.title;
     document.getElementById("rdlg-book-author").value = book.authors || "";
+    document.getElementById("rdlg-book-description").value = book.description || "";
     document.getElementById("rdlg-book-cover").value = book.coverUrl || "";
     document.getElementById("rdlg-rating").value = "";
     document.getElementById("rdlg-text").value = "";
@@ -131,6 +133,7 @@ class BookSearch {
       title: document.getElementById("rdlg-book-title").value,
       author: document.getElementById("rdlg-book-author").value,
       cover_url: document.getElementById("rdlg-book-cover").value,
+      description: document.getElementById("rdlg-book-description").value,
       rating: rating,
       review_text: reviewText,
     };

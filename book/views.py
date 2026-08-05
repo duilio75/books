@@ -1,6 +1,6 @@
 import requests
 from django.conf import settings
-from django.db.models import Count
+from django.db.models import Avg, Count
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from rest_framework import generics
@@ -20,7 +20,11 @@ def google_books_search(request):
     query = request.GET.get("q", "").strip()
     if not query:
         return JsonResponse({"error": "Missing query"}, status=400)
-    params = {"title": query, "limit": 8, "fields": "key,title,author_name,cover_i,isbn"}
+    params = {
+        "title": query,
+        "limit": 8,
+        "fields": "key,title,author_name,cover_i,isbn,first_sentence",
+    }
     try:
         resp = session_with_retries().get(
             "https://openlibrary.org/search.json",
@@ -51,11 +55,13 @@ def google_books_search(request):
         volume_id = doc.get("key", "")
         isbns = doc.get("isbn", [])
         cover_id = doc.get("cover_i")
+        first_sentences = doc.get("first_sentence", [])
         items.append({
             "id": volume_id,
             "volumeInfo": {
                 "title": doc.get("title", ""),
                 "authors": doc.get("author_name", []),
+                "description": first_sentences[0] if first_sentences else "",
                 "industryIdentifiers": [
                     {"type": "ISBN", "identifier": isbn} for isbn in isbns[:5]
                 ],
@@ -78,15 +84,14 @@ class BookReviewCreate(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         data = serializer.validated_data
-        s = ''
-        print("BookReview payload before create:", data)
+        description = data.pop("description", "")
         book, _ = Book.objects.get_or_create(
             volume=data.get("volume_id", ""),
             defaults={
                 "title": data.get("title", ""),
                 "author": data.get("author", ""),
                 "cover_url": data.get("cover_url", ""),
-                "description": "",
+                "description": description,
             },
         )
         serializer.save(book=book)
@@ -109,7 +114,10 @@ def home_page_detail(request):
     and the ContentBlock configured via the DEFAULT_HOME_BLOCK env var.
     """
     featured_books = (
-        Book.objects.annotate(review_count=Count("reviews"))
+        Book.objects.annotate(
+            review_count=Count("reviews"),
+            average_rating=Avg("reviews__rating"),
+        )
         .filter(review_count__gt=0)
         .order_by("-review_count")[:4]
     )

@@ -21,11 +21,14 @@ class SourceSerializer(serializers.ModelSerializer):
 
 
 class BookReviewSerializer(serializers.ModelSerializer):
+    description = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
     class Meta:
         model = BookReview
         fields = [
             "id", "book", "volume_id", "title", "author",
             "cover_url", "rating", "review_text", "created_at",
+            "description",
         ]
         read_only_fields = ["id", "book", "created_at"]
 

@@ -1,5 +1,5 @@
     <div class="relative before:absolute before:inset-0 before:border-y before:[border-image:linear-gradient(to_right,transparent,--theme(--color-slate-300/.8),transparent)1]">
-        <div class="" data-aos="zoom-y-out" data-aos-delay="450">
+        <div class="py-5" data-aos="zoom-y-out" data-aos-delay="450">
             <form id="book-search-form" class="flex gap-2">
                     <input
                       id="book-search-input"
@@ -15,9 +15,9 @@
                       Search
                     </button>
             </form>
-        <div id="book-results" class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4"></div>
         </div>
-    </div>
+    </div> 
+    <div id="book-results" class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4"></div>
  <!-- Review dialog -->
   <dialog id="review-dialog" class="fixed top-1/2 left-1/2 m-0 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl p-0 shadow-2xl backdrop:bg-black/50">
     <div class="flex items-start justify-between border-b border-gray-100 px-6 py-4">
@@ -38,6 +38,7 @@
       <input type="hidden" id="rdlg-book-author" />
       <input type="hidden" id="rdlg-book-cover" />
       <input type="hidden" id="rdlg-rating" />
+      <input type="hidden" id="rdlg-book-description" />
 
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Your rating</label>
