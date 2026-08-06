@@ -13,15 +13,15 @@
       <!-- <div class="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform" aria-hidden="true">
         <img alt="Stripes" width="768" height="438" decoding="async" data-nimg="1" class="max-w-none" style="color:transparent" src="{% static 'vendors/images/stripes.svg' %}" />
       </div> -->
-      <div class="pointer-events-none absolute -top-32 left-1/2 ml-[580px] -translate-x-1/2" aria-hidden="true">
+      <div class="pointer-events-none absolute -top-32 left-1/2 ml-145 -translate-x-1/2" aria-hidden="true">
         <div class="h-80 w-80 rounded-full bg-linear-to-tr from-blue-500 opacity-50 blur-[160px]">
         </div>
       </div>
-      <div class="pointer-events-none absolute left-1/2 top-[420px] ml-[380px] -translate-x-1/2" aria-hidden="true">
+      <div class="pointer-events-none absolute left-1/2 top-105 ml-95 -translate-x-1/2" aria-hidden="true">
         <div class="h-80 w-80 rounded-full bg-linear-to-tr from-blue-500 to-gray-900 opacity-50 blur-[160px]">
         </div>
       </div>
-      <div class="pointer-events-none absolute left-1/2 top-[640px] -ml-[300px] -translate-x-1/2" aria-hidden="true">
+      <div class="pointer-events-none absolute left-1/2 top-160 -ml-75 -translate-x-1/2" aria-hidden="true">
         <div class="h-80 w-80 rounded-full bg-linear-to-tr from-blue-500 to-gray-900 opacity-50 blur-[160px]">
         </div>
       </div>
@@ -43,7 +43,7 @@
             <h1 class="mb-6 py-5 border-y text-5xl font-bold [border-image:linear-gradient(to_right,transparent,--theme(--color-slate-300/.8),transparent)1] md:text-6xl" data-aos="zoom-y-out" data-aos-delay="150">
               {{ home_block.title }}
             </h1>
-            {% if home_block.sub_title %}<p class="mt-2 text-lg text-gray-600">{{ home_block.sub_title }}</p>{% endif %}
+            {% if home_block.sub_title %}<h2 class="mt-2 text-3xl text-blue-600 md:text-4xl">{{ home_block.sub_title }}</h2>{% endif %}
             <div class="mx-auto mb-6">
                <div class="prose mt-4 max-w-none text-gray-700">{{ home_block.body|safe }}</div>
             </div>
@@ -85,7 +85,7 @@
             {% for book in featured_books %}
             <a href="{% url 'book-page-detail' book.url_alias %}" class="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-gray-900/80 transition hover:border-white/20 hover:bg-gray-900/90">
               <p class="flex items-center gap-1 px-4 py-2 text-xs text-gray-400">
-                <svg class="relative -top-[1px] h-3.5 w-3.5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <svg class="relative -top-px h-3.5 w-3.5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 0 0 .951.69h4.163c.969 0 1.371 1.24.588 1.81l-3.368 2.447a1 1 0 0 0-.363 1.118l1.287 3.957c.299.922-.756 1.688-1.54 1.118l-3.367-2.446a1 1 0 0 0-1.176 0l-3.367 2.446c-.784.57-1.838-.196-1.539-1.118l1.286-3.957a1 1 0 0 0-.363-1.118L2.06 9.385c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 0 0 .951-.69z"/>
                 </svg>
                 {{ book.average_rating|floatformat:1 }} · {{ book.review_count }} review{{ book.review_count|pluralize }}
@@ -105,64 +105,66 @@
     </section>
     {% endif %}
     <section>
-      <div class="mx-auto max-w-2xl px-4 sm:px-6">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <div class="py-12 md:py-20">
-          <div class="space-y-3 text-center">
+          <div class="text-center">
             <div class="relative inline-flex">
               <svg class="absolute -left-6 -top-2 -z-10" width="40" height="49" viewbox="0 0 40 49" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.7976 -0.000136375L39.9352 23.4746L33.4178 31.7234L13.7686 11.4275L22.7976 -0.000136375ZM9.34947 17.0206L26.4871 40.4953L19.9697 48.7441L0.320491 28.4482L9.34947 17.0206Z" fill="#D1D5DB">
                 </path>
               </svg>
-              <img alt="Large testimonial" loading="lazy" width="48" height="48" decoding="async" data-nimg="1" class="rounded-full" style="color:transparent" src="{% static 'vendors/images/large-testimonial.jpg' %}" />
+              <img alt="chief" loading="lazy" width="48" height="48" decoding="async" data-nimg="1" class="rounded-full" style="color:transparent" src="{% static 'vendors/images/du.png' %}" />
             </div>
             <p class="text-2xl font-bold text-gray-900">
-              “Simple has simplified my life in more ways than one. From managing my sites to
-             
-              <em class="italic text-gray-500">
-                keeping track of tasks
-              </em>
-              , it
-              s become my go-to tool for everything.”
+              “Traveling Books aims to be a place where you can share experiences<span class=" text-blue-600 mx-1">that have changed</span>the way you approach<span class=" text-blue-500 mx-1">the challenges</span>we face every day.”
             </p>
             <div class="text-sm font-medium text-gray-500">
               <span class="text-gray-700">
-                Mary Sullivan
+                Duilio Devigus
               </span>
-              <span class="text-gray-400">
-                /
-              </span>
-              <a class="text-blue-500" href="#0">
-                CTO at Microsoft
-              </a>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section>
-      <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <div class="relative overflow-hidden rounded-2xl text-center shadow-xl before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-2xl before:bg-gray-900" data-aos="zoom-y-out">
-          <div class="absolute bottom-0 left-1/2 -z-10 -translate-x-1/2 translate-y-1/2" aria-hidden="true">
-            <div class="h-56 w-[480px] rounded-full border-[20px] border-blue-500 blur-3xl">
+            <div class="my-5">
+              <p class="text-2xl font-bold text-gray-900">
+                How it's work
+              </p>
             </div>
-          </div>
-          <div class="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform" aria-hidden="true">
-            <img alt="Stripes" loading="lazy" width="768" height="432" decoding="async" data-nimg="1" class="max-w-none" style="color:transparent" src="{% static 'vendors/images/stripes-dark.svg' %}" />
-          </div>
-          <div class="px-4 py-12 md:px-12 md:py-20">
-            <h2 class="mb-6 border-y text-3xl font-bold text-gray-200 [border-image:linear-gradient(to_right,transparent,--theme(--color-slate-700/.7),transparent)1] md:mb-12 md:text-4xl">
-              Create your next project with Simple
-            </h2>
-            <div class="mx-auto max-w-xs sm:flex sm:max-w-none sm:justify-center">
-              <a class="btn group mb-4 w-full bg-linear-to-t from-blue-600 to-blue-500 bg-[length:100%_100%] bg-[bottom] text-white shadow-sm hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto" href="#0">
-                <span class="relative inline-flex items-center">
-                  Start Free Trial
-                 
-                  <span class="ml-1 tracking-normal text-blue-300 transition-transform group-hover:translate-x-0.5">
-                    -
-                  </span>
-                </span>
-              </a>
+           
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 md:gap-8 lg:gap-12 mb-8 sm:mb-10 md:mb-16">
+              <div class="blocco-steps block-">
+                <div class="flex flex-col items-center text-center animate-fade-in-up hover:scale-105 transition-all duration-300 group font-amsi" style="animation-delay: 0.05s;">
+                  <div class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-black mb-3 sm:mb-4 md:mb-6 group-hover:text-blue-600 transition-colors duration-300">1</div>
+                  <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-lg sm:rounded-xl mb-3 sm:mb-4 md:mb-6 flex items-center justify-center overflow-hidden bg-gray-50 group-hover:bg-blue-50 group-hover:shadow-lg transition-all duration-300 animate-float">
+                    <img src="{% static 'vendors/images/step1.webp' %}" alt="step 1" title="step 1" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 object-cover group-hover:scale-110 transition-transform duration-300">
+                  </div>
+                  <h3 class="font-bold text-gray-900 text-base lg:text-lg leading-tight max-w-36 sm:max-w-32 md:max-w-34 font-amsi">
+                    Looking for a book that you wanna review
+                  </h3>
+                </div>
+              </div>
+
+              <div class="blocco-steps block-">
+                <div class="flex flex-col items-center text-center animate-fade-in-up hover:scale-105 transition-all duration-300 group font-amsi" style="animation-delay: 0.05s;">
+                  <div class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-black mb-3 sm:mb-4 md:mb-6 group-hover:text-blue-600 transition-colors duration-300">2</div>
+                  <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-lg sm:rounded-xl mb-3 sm:mb-4 md:mb-6 flex items-center justify-center overflow-hidden bg-gray-50 group-hover:bg-blue-50 group-hover:shadow-lg transition-all duration-300 animate-float">
+                    <img src="{% static 'vendors/images/step2.webp' %}" alt="Step 2" title="Step 2" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 object-cover group-hover:scale-110 transition-transform duration-300">
+                  </div>
+                  <h3 class="font-bold text-gray-900 text-base lg:text-lg leading-tight max-w-36 sm:max-w-32 md:max-w-34 font-amsi">
+                    Write a review 
+                  </h3>
+                </div>
+              </div>
+
+              <div class="blocco-steps block-">
+                <div class="flex flex-col items-center text-center animate-fade-in-up hover:scale-105 transition-all duration-300 group font-amsi" style="animation-delay: 0.05s;">
+                  <div class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-black mb-3 sm:mb-4 md:mb-6 group-hover:text-blue-600 transition-colors duration-300">3</div>
+                  <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-lg sm:rounded-xl mb-3 sm:mb-4 md:mb-6 flex items-center justify-center overflow-hidden bg-gray-50 group-hover:bg-blue-50 group-hover:shadow-lg transition-all duration-300 animate-float">
+                    <img src="{% static 'vendors/images/step3.webp' %}" alt="Step 3" title="Step 3" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 object-cover group-hover:scale-110 transition-transform duration-300">
+                  </div>
+                  <h3 class="font-bold text-gray-900 text-base lg:text-lg leading-tight max-w-36 sm:max-w-32 md:max-w-34 font-amsi">
+                    Look at our most reviewed books, to find your next book
+                  </h3>
+                </div>
+              </div>
             </div>
           </div>
         </div>

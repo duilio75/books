@@ -10,6 +10,8 @@ from tinymce.models import HTMLField
 
 
 class BasicPage(models.Model):
+        SHORT_DESCRIPTION_MAX_LENGTH = 240
+
         title = models.CharField(max_length=200)
         subtitle = models.CharField(max_length=300, blank=True)
         image = models.ImageField(upload_to="basic_pages/", blank=True, null=True)
@@ -36,6 +38,18 @@ class BasicPage(models.Model):
                 alias = f"{base}-{counter}"
             self.url_alias = alias
             super().save(*args, **kwargs)
+
+        @property
+        def short_description(self):
+            """Plain-text `body`, tags stripped and truncated to SHORT_DESCRIPTION_MAX_LENGTH characters."""
+            return Truncator(strip_tags(self.body)).chars(self.SHORT_DESCRIPTION_MAX_LENGTH)
+
+        @property
+        def image_full_url(self):
+            """Absolute URL of `image` (e.g. for og:image), built from settings.SITE_URL."""
+            if not self.image:
+                return ""
+            return urljoin(settings.SITE_URL, self.image.url)
 
         def __str__(self):
             return self.title

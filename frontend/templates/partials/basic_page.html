@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block title %}{{ page.title }}{% endblock %}
+{% block meta_site_name %}<meta name="og:site_name" content="traveling books" />{% endblock %}
+{% block meta_type %}<meta name="og:type" content="website" />{% endblock %}
+{% block meta_url %}<meta name="og:url" content="{{ request.build_absolute_uri }}" />{% endblock %}
+{% block meta_title %}<meta name="og:title" content="{{ page.title }}" />{% endblock %}
+{% block meta_descri %}<meta name="og:description" content="{{ page.short_description }}" />{% endblock %}
+{% block meta_img %}<meta name="og:image" content="{{ page.image_full_url }}" />{% endblock %}
 {% block main %}
 <main class="grow">
   <section class="relative">
