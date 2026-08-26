@@ -1,11 +1,17 @@
 # Build and run the Django app in Docker, connecting to Postgres on the host.
 #
-# Inside the container "localhost" is the container itself, so DB_HOST is
-# overridden to host.docker.internal at runtime (mapped to the host gateway).
+# The container shares the host network namespace (--network host), so
+# "localhost" inside the container is the host: DB_HOST=localhost from .env
+# reaches Postgres on 127.0.0.1:5432 without opening it to the docker bridge.
+# The app binds the host's $(PORT) directly, so no -p mapping is needed.
+# Linux only; on macOS/Windows use --add-host=host.docker.internal:host-gateway
+# with -e DB_HOST=host.docker.internal instead.
 # Everything else comes from .env, which is intentionally not baked into the image.
 
 IMAGE := tb-backend
-PORT  := 8000
+PORT  := 8075
+# With --network host there is no port mapping, so PORT is passed straight to
+# gunicorn's --bind. Override per run if it's taken: make run PORT=8081
 # Named volume holding user uploads (MEDIA_ROOT=/app/media); survives rebuilds.
 MEDIA_VOLUME := tb-media
 # Where media snapshots are written/read on the host.
@@ -18,12 +24,12 @@ build:
 	docker build -t $(IMAGE) .
 
 run:
-	docker run --rm -p $(PORT):$(PORT) \
-		--add-host=host.docker.internal:host-gateway \
+	docker run --rm \
+		--network host \
 		--env-file .env \
-		-e DB_HOST=host.docker.internal \
 		-v $(MEDIA_VOLUME):/app/media \
-		$(IMAGE)
+		$(IMAGE) \
+		gunicorn backend.wsgi:application --bind 0.0.0.0:$(PORT) --workers 3
 
 # Build then run in one step
 up: build run
@@ -31,9 +37,8 @@ up: build run
 # Open a shell in a throwaway container (handy for debugging)
 sh:
 	docker run --rm -it \
-		--add-host=host.docker.internal:host-gateway \
+		--network host \
 		--env-file .env \
-		-e DB_HOST=host.docker.internal \
 		-v $(MEDIA_VOLUME):/app/media \
 		$(IMAGE) /bin/sh
 
