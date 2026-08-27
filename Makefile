@@ -18,7 +18,7 @@ MEDIA_VOLUME := tb-media
 BACKUP_DIR  := backup
 BACKUP_FILE := media.tgz
 
-.PHONY: build run up sh logs backup-media backup-media-dated restore-media
+.PHONY: build run up sh logs backup-media backup-media-dated restore-media save ship load
 
 build:
 	docker build -t $(IMAGE) .
@@ -41,6 +41,33 @@ sh:
 		--env-file .env \
 		-v $(MEDIA_VOLUME):/app/media \
 		$(IMAGE) /bin/sh
+
+# ---- Ship the image to the server (no registry needed) ---------------------
+# The image is saved to a gzipped tarball, copied over SSH and loaded there:
+#   make save                          -> $(DIST_DIR)/$(IMAGE_FILE)
+#   make ship SSH_HOST=user@server     -> save + scp + docker load on the server
+#   make load                          -> load a tarball on THIS machine
+# .env is deliberately not in the image: copy the server's own .env separately.
+SSH_HOST   ?= 
+REMOTE_DIR ?= /home/manager/book
+DIST_DIR   := dist
+IMAGE_FILE := tb-backend.tgz
+
+save:
+	mkdir -p $(DIST_DIR)
+	docker save $(IMAGE):latest | gzip -1 > $(DIST_DIR)/$(IMAGE_FILE)
+	@echo "Wrote $(DIST_DIR)/$(IMAGE_FILE) ($$(du -h $(DIST_DIR)/$(IMAGE_FILE) | cut -f1))"
+
+ship: save
+	@test -n "$(SSH_HOST)" || { echo "Set SSH_HOST, e.g. make ship SSH_HOST=user@server"; exit 1; }
+	ssh $(SSH_HOST) 'test -d $(REMOTE_DIR)' || { echo "$(REMOTE_DIR) missing on $(SSH_HOST)"; exit 1; }
+	scp $(DIST_DIR)/$(IMAGE_FILE) $(SSH_HOST):$(REMOTE_DIR)/
+	ssh $(SSH_HOST) 'gunzip -c $(REMOTE_DIR)/$(IMAGE_FILE) | docker load'
+	@echo "Loaded $(IMAGE) on $(SSH_HOST) -- start it there (see run target, PORT=8000)."
+
+load:
+	@test -f $(DIST_DIR)/$(IMAGE_FILE) || { echo "No image at $(DIST_DIR)/$(IMAGE_FILE)"; exit 1; }
+	gunzip -c $(DIST_DIR)/$(IMAGE_FILE) | docker load
 
 # Snapshot the media volume into $(BACKUP_DIR)/$(BACKUP_FILE) on the host.
 # Mounted read-only so the running app can't be disturbed by the backup.

@@ -36,3 +36,6 @@ backup/
 Dockerfile
 .dockerignore
 docker-compose.yml
+
+# Exported image tarballs (make save)
+dist/
