@@ -1,291 +1,375 @@
 <title>Traveling Books Header</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     1. DESIGN TOKENS + COMPONENT CLASSES
+     Every long Tailwind chain lives here, named once. The markup below
+     stays readable because it only ever uses these names.
+     ═══════════════════════════════════════════════════════════════════ -->
 <style type="text/tailwindcss">
   @theme {
     --font-inter: Inter, ui-sans-serif, system-ui, sans-serif;
-    --color-ink: oklch(0.21 0.02 260);
+  }
+
+  @layer components {
+
+    /* ---- Buttons — copied from frontend/src/styles/additional-styles/utility-patterns.css ---- */
+    .btn-sm      { @apply inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-[5px]
+                          text-sm font-medium shadow-sm transition-all; }
+    .btn-ghost   { @apply bg-white text-gray-800 ring-1 ring-gray-200 hover:bg-gray-50; }
+    .btn-dark    { @apply bg-gray-800 text-gray-200 hover:bg-gray-900; }
+    .btn-primary { @apply bg-blue-700 text-white hover:bg-blue-800; }
+
+    /* ---- Header shell ---- */
+    .site-header { @apply fixed top-0 z-40 w-full md:top-6; }
+    .shell       { @apply mx-auto max-w-6xl px-4 sm:px-6; }
+    .header-bar  { @apply relative flex h-16 items-center gap-3 border-b border-gray-200 bg-white/95 px-3
+                          shadow-lg shadow-black/[0.04] backdrop-blur-md md:rounded-2xl md:border; }
+
+    /* ---- Brand ---- */
+    .brand      { @apply flex shrink-0 items-center gap-2.5 rounded-lg pr-2; }
+    .brand-mark { @apply grid h-10 w-10 place-items-center rounded-xl bg-blue-700 text-[13px] font-bold
+                         tracking-tight text-white shadow-sm; }
+    .brand-name { @apply hidden text-[15px] font-semibold leading-tight tracking-tight text-gray-900 sm:block; }
+
+    /* ---- Desktop navigation ---- */
+    .nav         { @apply hidden lg:flex lg:flex-1 lg:items-center; }
+    .nav-list    { @apply flex items-center gap-0.5 text-sm font-medium; }
+    .nav-link    { @apply flex h-9 items-center rounded-lg px-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900; }
+    .nav-trigger { @apply flex h-9 items-center gap-1 rounded-lg px-3 text-gray-700
+                          hover:bg-gray-100 hover:text-gray-900; }
+    .nav-link.is-active {
+      @apply relative text-blue-700 hover:bg-transparent hover:text-blue-700
+             after:absolute after:inset-x-3 after:bottom-1 after:h-0.5 after:rounded-full after:bg-blue-700;
+    }
+
+    /* ---- Dropdown panel (visibility is handled in the behaviour sheet below) ---- */
+    .nav-panel    { @apply absolute left-1/2 top-full z-10 pt-3; }
+    .panel-card   { @apply rounded-xl border border-gray-200 bg-white p-1.5 shadow-xl shadow-black/[0.07]; }
+    .panel-link   { @apply block rounded-lg p-2.5 text-gray-900 hover:bg-gray-50; }
+    .panel-rich   { @apply flex items-start gap-3 rounded-lg p-2.5 hover:bg-gray-50; }
+    .panel-title  { @apply block text-gray-900; }
+    .panel-desc   { @apply block text-xs font-normal text-gray-500; }
+    .panel-rule   { @apply mt-1.5 border-t border-gray-100 pt-1.5; }
+    .panel-badge  { @apply rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700; }
+
+    /* ---- Right-hand actions ---- */
+    .actions      { @apply ml-auto flex items-center gap-2; }
+    .icon-btn     { @apply grid h-9 w-9 place-items-center rounded-lg text-gray-500
+                           hover:bg-gray-100 hover:text-gray-900; }
+    .search-input { @apply h-9 w-56 rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-3 text-sm text-gray-900
+                           placeholder-gray-400 shadow-xs transition-colors
+                           focus:border-blue-300 focus:bg-white focus:ring-0; }
+    .search-icon  { @apply pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 fill-gray-400; }
+    .avatar       { @apply grid h-7 w-7 place-items-center rounded-full bg-blue-100 text-[11px] font-bold text-blue-800; }
+
+    /* ---- Mobile panel ---- */
+    .mobile-panel { @apply mt-2 overflow-hidden rounded-2xl border border-gray-200 bg-white
+                           shadow-xl shadow-black/[0.07] lg:hidden; }
+    .m-list       { @apply flex flex-col gap-0.5 text-sm font-medium; }
+    .m-link       { @apply block rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50; }
+    .m-link.is-active { @apply bg-blue-50 text-blue-700; }
+    .m-toggle     { @apply flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50; }
+    .m-sublist    { @apply ml-3 mt-0.5 flex flex-col gap-0.5 border-l border-gray-200 pl-3 font-normal; }
+    .m-sublink    { @apply block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50; }
+
+    /* ---- Icons ---- */
+    .icon    { @apply h-4 w-4 shrink-0 fill-current; }
+    .icon-lg { @apply h-5 w-5 shrink-0 fill-current; }
+    .chev    { @apply h-3 w-3 shrink-0 fill-gray-400 transition-transform duration-200; }
+
+    /* ---- Demo page below the header (not part of the header itself) ---- */
+    .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.12em] text-blue-700; }
+    .caps    { @apply text-sm font-semibold uppercase tracking-[0.1em] text-gray-500; }
+    .card    { @apply rounded-2xl border border-gray-200 bg-white p-5; }
+    .code    { @apply rounded bg-gray-100 px-1 py-0.5 text-[13px] text-gray-800; }
   }
 </style>
 
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     2. BEHAVIOUR — the few rules Tailwind utilities cannot express
+     ═══════════════════════════════════════════════════════════════════ -->
 <style>
-  :root {
-    color-scheme: light;
-    --page-bg: #f7f8fa;
-    --page-fg: #1c2434;
-    --panel: #ffffff;
-    --hairline: rgb(0 0 0 / 0.08);
-  }
-  :root:not([data-theme="light"]) { }
+  :root { color-scheme: light; --page-bg: #f7f8fa; }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --page-bg: #0d1117;
-      --page-fg: #e6e9ef;
-      --panel: #161b22;
-      --hairline: rgb(255 255 255 / 0.12);
-    }
+    :root:not([data-theme="light"]) { --page-bg: #eef0f4; }
   }
-  :root[data-theme="dark"] {
-    --page-bg: #0d1117;
-    --page-fg: #e6e9ef;
-    --panel: #161b22;
-    --hairline: rgb(255 255 255 / 0.12);
-  }
+  :root[data-theme="dark"] { --page-bg: #eef0f4; }
+
   body {
     background: var(--page-bg);
-    color: var(--page-fg);
     font-family: Inter, ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  /* Project utility patterns (frontend/src/styles/additional-styles/utility-patterns.css) */
-  .btn-sm {
-    font-size: 0.875rem; line-height: 1.5715; font-weight: 500;
-    display: inline-flex; align-items: center; justify-content: center;
-    border-radius: 0.5rem; white-space: nowrap; transition: all .15s ease;
-    padding: 5px 0.75rem; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  }
+
   [hidden] { display: none !important; }
+
+  /* Desktop dropdowns: open on hover AND on keyboard focus, closed otherwise. */
+  @media (min-width: 1024px) {
+    .nav-panel {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateX(-50%) translateY(6px);
+      transition: opacity .18s ease, transform .18s ease, visibility .18s;
+    }
+    .nav-group:hover > .nav-panel,
+    .nav-group:focus-within > .nav-panel {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .nav-group:hover .chev,
+    .nav-group:focus-within .chev { transform: rotate(180deg); }
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; border-radius: .5rem; }
+
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   }
-  /* Desktop dropdown: open on hover and on keyboard focus */
-  @media (min-width: 1024px) {
-    .nav-group:hover > .nav-panel,
-    .nav-group:focus-within > .nav-panel { opacity: 1; visibility: visible; transform: translateY(0) translateX(-50%); pointer-events: auto; }
-    .nav-panel { opacity: 0; visibility: hidden; transform: translateY(6px) translateX(-50%); pointer-events: none; transition: opacity .18s ease, transform .18s ease, visibility .18s; }
-    .nav-group:hover > .nav-trigger > .chev,
-    .nav-group:focus-within > .nav-trigger > .chev { transform: rotate(180deg); }
-  }
-  a:focus-visible, button:focus-visible, input:focus-visible {
-    outline: 2px solid #3b82f6; outline-offset: 2px; border-radius: 0.5rem;
-  }
 </style>
 
-<!-- ============================================================ -->
-<!--  HEADER — static Tailwind v4 mockup                          -->
-<!--  Maps 1:1 onto: templates/header/header.html + menu/menu.html -->
-<!-- ============================================================ -->
-<header class="fixed top-0 z-40 w-full md:top-6">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6">
-    <div class="relative flex h-16 items-center gap-3 border-b border-gray-200 bg-white/95 px-3 shadow-lg shadow-black/[0.04] backdrop-blur-md md:rounded-2xl md:border">
 
-      <!-- Brand -->
-      <a href="/" aria-label="Traveling Books — home" class="flex shrink-0 items-center gap-2.5 rounded-lg pr-2">
-        <span class="grid h-10 w-10 place-items-center rounded-xl bg-blue-700 text-[13px] font-bold tracking-tight text-white shadow-sm">TB</span>
-        <span class="hidden text-[15px] font-semibold leading-tight tracking-tight text-gray-900 sm:block">
-          Traveling<span class="text-blue-700">Books</span>
-        </span>
+<!-- ═══════════════════════════════════════════════════════════════════
+     3. ICON SPRITE — defined once, referenced with <use>
+     ═══════════════════════════════════════════════════════════════════ -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <symbol id="i-chevron" viewBox="0 0 12 12"><path d="M6 8.5 1.5 4h9L6 8.5Z"/></symbol>
+  <symbol id="i-search"  viewBox="0 0 16 16"><path d="M7 2a5 5 0 1 0 3.06 8.95l3 2.99 1.4-1.41-2.98-3A5 5 0 0 0 7 2Zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"/></symbol>
+  <symbol id="i-menu"    viewBox="0 0 20 20"><path d="M3 5h14v2H3V5Zm0 4h14v2H3V9Zm0 4h14v2H3v-2Z"/></symbol>
+  <symbol id="i-books"   viewBox="0 0 16 16"><path d="M2 2h5v12H2V2Zm7 0h5v12H9V2Z"/></symbol>
+  <symbol id="i-plus"    viewBox="0 0 16 16"><path d="M7 2h2v5h5v2H9v5H7V9H2V7h5V2Z"/></symbol>
+  <symbol id="i-release" viewBox="0 0 16 16"><path d="M8 1 2 14h12L8 1Zm0 4.6L11.2 12H4.8L8 5.6Z"/></symbol>
+</svg>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     4. HEADER
+     Maps 1:1 onto templates/header/header.html + templates/menu/menu.html
+     ═══════════════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="shell">
+    <div class="header-bar">
+
+      <!-- Brand ------------------------------------------------------ -->
+      <a class="brand" href="/" aria-label="Traveling Books — home">
+        <span class="brand-mark">TB</span>
+        <span class="brand-name">Traveling<span class="text-blue-700">Books</span></span>
       </a>
 
-      <!-- ============ Desktop navigation ({% render_menu "main" %}) ============ -->
-      <nav class="hidden lg:flex lg:flex-1 lg:items-center" aria-label="Main">
-        <ul class="flex items-center gap-0.5 text-sm font-medium">
+      <!-- Desktop menu — {% render_menu "main" %} --------------------- -->
+      <nav class="nav" aria-label="Main">
+        <ul class="nav-list">
 
-          <!-- level-1 item, no children, active -->
+          <!-- leaf item, current page -->
           <li>
-            <a href="/" aria-current="page"
-               class="relative flex h-9 items-center rounded-lg px-3 text-blue-700 after:absolute after:inset-x-3 after:bottom-1 after:h-0.5 after:rounded-full after:bg-blue-700">
-              Home
-            </a>
+            <a class="nav-link is-active" href="/" aria-current="page">Home</a>
           </li>
 
-          <!-- level-1 item WITH children -> dropdown -->
+          <!-- item with children → dropdown -->
           <li class="nav-group relative">
-            <button type="button" class="nav-trigger flex h-9 items-center gap-1 rounded-lg px-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900" aria-expanded="false">
+            <button class="nav-trigger" type="button" aria-expanded="false">
               Books
-              <svg class="chev h-3 w-3 fill-gray-400 transition-transform duration-200" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8.5 1.5 4h9L6 8.5Z"/></svg>
+              <svg class="chev"><use href="#i-chevron"/></svg>
             </button>
-            <div class="nav-panel absolute left-1/2 top-full w-72 pt-3">
-              <ul class="rounded-xl border border-gray-200 bg-white p-1.5 shadow-xl shadow-black/[0.07]">
+
+            <div class="nav-panel w-72">
+              <ul class="panel-card">
                 <li>
-                  <a href="/books/" class="flex items-start gap-3 rounded-lg p-2.5 hover:bg-gray-50">
-                    <svg class="mt-0.5 h-4 w-4 shrink-0 fill-blue-700" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2h5v12H2V2Zm7 0h5v12H9V2Z"/></svg>
+                  <a class="panel-rich" href="/books/">
+                    <svg class="icon mt-0.5 text-blue-700"><use href="#i-books"/></svg>
                     <span>
-                      <span class="block text-gray-900">Browse the catalog</span>
-                      <span class="block text-xs font-normal text-gray-500">4,182 titles in circulation</span>
+                      <span class="panel-title">Browse the catalog</span>
+                      <span class="panel-desc">4,182 titles in circulation</span>
                     </span>
                   </a>
                 </li>
                 <li>
-                  <a href="/books/register/" class="flex items-start gap-3 rounded-lg p-2.5 hover:bg-gray-50">
-                    <svg class="mt-0.5 h-4 w-4 shrink-0 fill-blue-700" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2h2v5h5v2H9v5H7V9H2V7h5V2Z"/></svg>
+                  <a class="panel-rich" href="/books/register/">
+                    <svg class="icon mt-0.5 text-blue-700"><use href="#i-plus"/></svg>
                     <span>
-                      <span class="block text-gray-900">Register a book</span>
-                      <span class="block text-xs font-normal text-gray-500">Get a BCID and start its journey</span>
+                      <span class="panel-title">Register a book</span>
+                      <span class="panel-desc">Get a BCID and start its journey</span>
                     </span>
                   </a>
                 </li>
                 <li>
-                  <a href="/books/release/" class="flex items-start gap-3 rounded-lg p-2.5 hover:bg-gray-50">
-                    <svg class="mt-0.5 h-4 w-4 shrink-0 fill-blue-700" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1 2 14h12L8 1Zm0 4.6L11.2 12H4.8L8 5.6Z"/></svg>
+                  <a class="panel-rich" href="/books/release/">
+                    <svg class="icon mt-0.5 text-blue-700"><use href="#i-release"/></svg>
                     <span>
-                      <span class="block text-gray-900">Release into the wild</span>
-                      <span class="block text-xs font-normal text-gray-500">Leave it somewhere, log the spot</span>
+                      <span class="panel-title">Release into the wild</span>
+                      <span class="panel-desc">Leave it somewhere, log the spot</span>
                     </span>
                   </a>
                 </li>
-                <li class="mt-1.5 border-t border-gray-100 pt-1.5">
-                  <a href="/map/" class="flex items-center justify-between rounded-lg p-2.5 text-gray-900 hover:bg-gray-50">
+                <li class="panel-rule">
+                  <a class="panel-link flex items-center justify-between" href="/map/">
                     Book map
-                    <span class="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">Live</span>
+                    <span class="panel-badge">Live</span>
                   </a>
                 </li>
               </ul>
             </div>
           </li>
 
-          <li>
-            <a href="/journeys/" class="flex h-9 items-center rounded-lg px-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900">Journeys</a>
-          </li>
+          <li><a class="nav-link" href="/journeys/">Journeys</a></li>
 
           <li class="nav-group relative">
-            <button type="button" class="nav-trigger flex h-9 items-center gap-1 rounded-lg px-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900" aria-expanded="false">
+            <button class="nav-trigger" type="button" aria-expanded="false">
               Community
-              <svg class="chev h-3 w-3 fill-gray-400 transition-transform duration-200" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8.5 1.5 4h9L6 8.5Z"/></svg>
+              <svg class="chev"><use href="#i-chevron"/></svg>
             </button>
-            <div class="nav-panel absolute left-1/2 top-full w-56 pt-3">
-              <ul class="rounded-xl border border-gray-200 bg-white p-1.5 shadow-xl shadow-black/[0.07]">
-                <li><a href="/members/" class="block rounded-lg p-2.5 text-gray-900 hover:bg-gray-50">Members</a></li>
-                <li><a href="/forum/" class="block rounded-lg p-2.5 text-gray-900 hover:bg-gray-50">Forum</a></li>
-                <li><a href="/events/" class="block rounded-lg p-2.5 text-gray-900 hover:bg-gray-50">Meet-ups</a></li>
+
+            <div class="nav-panel w-56">
+              <ul class="panel-card">
+                <li><a class="panel-link" href="/members/">Members</a></li>
+                <li><a class="panel-link" href="/forum/">Forum</a></li>
+                <li><a class="panel-link" href="/events/">Meet-ups</a></li>
               </ul>
             </div>
           </li>
 
-          <li>
-            <a href="/about/" class="flex h-9 items-center rounded-lg px-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900">About</a>
-          </li>
+          <li><a class="nav-link" href="/about/">About</a></li>
         </ul>
       </nav>
 
-      <!-- ============ Right cluster ============ -->
-      <div class="ml-auto flex items-center gap-2">
+      <!-- Actions ---------------------------------------------------- -->
+      <div class="actions">
 
-        <!-- Search (templates/search) -->
-        <form action="/search/" method="get" class="hidden xl:block">
-          <label for="q" class="sr-only">Search books</label>
+        <!-- full search field from xl up -->
+        <form class="hidden xl:block" action="/search/" method="get">
+          <label class="sr-only" for="q">Search books</label>
           <div class="relative">
-            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 fill-gray-400" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2a5 5 0 1 0 3.06 8.95l3 2.99 1.4-1.41-2.98-3A5 5 0 0 0 7 2Zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"/></svg>
-            <input id="q" name="q" type="search" placeholder="Title, author, BCID…"
-                   class="h-9 w-56 rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-3 text-sm text-gray-900 placeholder-gray-400 shadow-xs transition-colors focus:border-blue-300 focus:bg-white focus:ring-0">
+            <svg class="search-icon"><use href="#i-search"/></svg>
+            <input class="search-input" id="q" name="q" type="search" placeholder="Title, author, BCID…">
           </div>
         </form>
 
-        <!-- Search icon-only below xl -->
-        <a href="/search/" aria-label="Search" class="grid h-9 w-9 place-items-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 xl:hidden">
-          <svg class="h-4 w-4 fill-current" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2a5 5 0 1 0 3.06 8.95l3 2.99 1.4-1.41-2.98-3A5 5 0 0 0 7 2Zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"/></svg>
+        <!-- icon only below xl -->
+        <a class="icon-btn xl:hidden" href="/search/" aria-label="Search">
+          <svg class="icon"><use href="#i-search"/></svg>
         </a>
 
-        <!-- {% if user.is_authenticated %} ... {% else %} -->
+        <!-- {% if user.is_authenticated %} … {% else %} … {% endif %} -->
         <div class="hidden items-center gap-2 sm:flex">
-          <a href="/signin" class="btn-sm bg-white text-gray-800 ring-1 ring-gray-200 hover:bg-gray-50">Login</a>
-          <a href="/signup" class="btn-sm bg-gray-800 text-gray-200 hover:bg-gray-900">Register</a>
+          <a class="btn-sm btn-ghost" href="/signin">Login</a>
+          <a class="btn-sm btn-dark" href="/signup">Register</a>
         </div>
 
-        <!-- Mobile toggle -->
-        <button id="menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false"
-                class="grid h-9 w-9 place-items-center rounded-lg text-gray-700 hover:bg-gray-100 lg:hidden">
+        <button class="icon-btn text-gray-700 lg:hidden" id="menu-toggle" type="button"
+                aria-controls="mobile-menu" aria-expanded="false">
           <span class="sr-only">Open main menu</span>
-          <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14v2H3V5Zm0 4h14v2H3V9Zm0 4h14v2H3v-2Z"/></svg>
+          <svg class="icon-lg"><use href="#i-menu"/></svg>
         </button>
       </div>
     </div>
 
-    <!-- ============ Mobile panel ============ -->
-    <div id="mobile-menu" hidden class="mt-2 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-black/[0.07] lg:hidden">
-      <nav aria-label="Mobile" class="p-2">
-        <ul class="flex flex-col gap-0.5 text-sm font-medium">
-          <li><a href="/" aria-current="page" class="block rounded-lg bg-blue-50 px-3 py-2.5 text-blue-700">Home</a></li>
+    <!-- Mobile menu -------------------------------------------------- -->
+    <div class="mobile-panel" id="mobile-menu" hidden>
+      <nav class="p-2" aria-label="Mobile">
+        <ul class="m-list">
+
+          <li><a class="m-link is-active" href="/" aria-current="page">Home</a></li>
 
           <li>
-            <button type="button" class="sub-toggle flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50" aria-expanded="false">
+            <button class="m-toggle" type="button" aria-expanded="false">
               Books
-              <svg class="chev h-3 w-3 fill-gray-400 transition-transform" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8.5 1.5 4h9L6 8.5Z"/></svg>
+              <svg class="chev"><use href="#i-chevron"/></svg>
             </button>
-            <ul hidden class="sub-list mt-0.5 ml-3 flex flex-col gap-0.5 border-l border-gray-200 pl-3 font-normal">
-              <li><a href="/books/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Browse the catalog</a></li>
-              <li><a href="/books/register/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Register a book</a></li>
-              <li><a href="/books/release/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Release into the wild</a></li>
-              <li><a href="/map/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Book map</a></li>
+            <ul class="m-sublist" hidden>
+              <li><a class="m-sublink" href="/books/">Browse the catalog</a></li>
+              <li><a class="m-sublink" href="/books/register/">Register a book</a></li>
+              <li><a class="m-sublink" href="/books/release/">Release into the wild</a></li>
+              <li><a class="m-sublink" href="/map/">Book map</a></li>
             </ul>
           </li>
 
-          <li><a href="/journeys/" class="block rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50">Journeys</a></li>
+          <li><a class="m-link" href="/journeys/">Journeys</a></li>
 
           <li>
-            <button type="button" class="sub-toggle flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50" aria-expanded="false">
+            <button class="m-toggle" type="button" aria-expanded="false">
               Community
-              <svg class="chev h-3 w-3 fill-gray-400 transition-transform" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8.5 1.5 4h9L6 8.5Z"/></svg>
+              <svg class="chev"><use href="#i-chevron"/></svg>
             </button>
-            <ul hidden class="sub-list mt-0.5 ml-3 flex flex-col gap-0.5 border-l border-gray-200 pl-3 font-normal">
-              <li><a href="/members/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Members</a></li>
-              <li><a href="/forum/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Forum</a></li>
-              <li><a href="/events/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Meet-ups</a></li>
+            <ul class="m-sublist" hidden>
+              <li><a class="m-sublink" href="/members/">Members</a></li>
+              <li><a class="m-sublink" href="/forum/">Forum</a></li>
+              <li><a class="m-sublink" href="/events/">Meet-ups</a></li>
             </ul>
           </li>
 
-          <li><a href="/about/" class="block rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50">About</a></li>
+          <li><a class="m-link" href="/about/">About</a></li>
         </ul>
 
+        <!-- auth buttons only appear here below sm, where the bar has no room -->
         <div class="mt-2 grid grid-cols-2 gap-2 border-t border-gray-100 p-2 pt-3 sm:hidden">
-          <a href="/signin" class="btn-sm bg-white py-2 text-gray-800 ring-1 ring-gray-200">Login</a>
-          <a href="/signup" class="btn-sm bg-gray-800 py-2 text-gray-200">Register</a>
+          <a class="btn-sm btn-ghost py-2" href="/signin">Login</a>
+          <a class="btn-sm btn-dark py-2" href="/signup">Register</a>
         </div>
       </nav>
     </div>
   </div>
 </header>
 
-<!-- ============================================================ -->
-<!--  Page body — context only, so the header can be judged in situ -->
-<!-- ============================================================ -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     5. DEMO PAGE — context so the header can be judged in situ
+     ═══════════════════════════════════════════════════════════════════ -->
 <main class="pt-24 md:pt-32">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+  <div class="shell">
 
     <section class="py-10">
-      <p class="text-xs font-semibold uppercase tracking-[0.12em] text-blue-700">Header refactor — static mockup</p>
-      <h1 class="mt-3 max-w-2xl text-4xl font-bold tracking-tight text-gray-900 md:text-5xl" style="text-wrap: balance;">
+      <p class="eyebrow">Header refactor — static mockup</p>
+      <h1 class="mt-3 max-w-2xl text-4xl font-bold tracking-tight text-gray-900 md:text-5xl" style="text-wrap: balance">
         Every book has a passport. This is the bar that follows it.
       </h1>
       <p class="mt-4 max-w-xl text-base text-gray-600">
-        Resize the window: the pill collapses to a full-width bar under <code class="rounded bg-gray-100 px-1 py-0.5 text-[13px] text-gray-800">lg</code>,
-        the search field folds to an icon under <code class="rounded bg-gray-100 px-1 py-0.5 text-[13px] text-gray-800">xl</code>,
-        and the auth buttons drop into the mobile panel under <code class="rounded bg-gray-100 px-1 py-0.5 text-[13px] text-gray-800">sm</code>.
+        Resize the window: the pill becomes a full-width bar under <code class="code">lg</code>,
+        the search field folds to an icon under <code class="code">xl</code>,
+        and the auth buttons move into the mobile panel under <code class="code">sm</code>.
       </p>
     </section>
 
-    <!-- Auth variant, shown side by side so both template branches are visible at once -->
+    <!-- Both branches of {% if user.is_authenticated %}, side by side -->
     <section class="pb-10">
-      <h2 class="text-sm font-semibold uppercase tracking-[0.1em] text-gray-500">Right cluster — both template branches</h2>
+      <h2 class="caps">Right cluster — both template branches</h2>
       <div class="mt-4 grid gap-4 md:grid-cols-2">
 
-        <div class="rounded-2xl border border-gray-200 bg-white p-5">
-          <p class="text-xs font-medium text-gray-500">{% if user.is_authenticated %} → false</p>
+        <div class="card">
+          <p class="text-xs font-medium text-gray-500">anonymous</p>
           <div class="mt-4 flex items-center gap-2">
-            <a href="/signin" class="btn-sm bg-white text-gray-800 ring-1 ring-gray-200 hover:bg-gray-50">Login</a>
-            <a href="/signup" class="btn-sm bg-gray-800 text-gray-200 hover:bg-gray-900">Register</a>
+            <a class="btn-sm btn-ghost" href="/signin">Login</a>
+            <a class="btn-sm btn-dark" href="/signup">Register</a>
           </div>
         </div>
 
-        <div class="rounded-2xl border border-gray-200 bg-white p-5">
-          <p class="text-xs font-medium text-gray-500">{% if user.is_authenticated %} → true</p>
+        <div class="card">
+          <p class="text-xs font-medium text-gray-500">authenticated</p>
           <div class="mt-4 flex items-center gap-2">
-            <a href="/books/register/" class="btn-sm bg-blue-700 text-white hover:bg-blue-800">Register a book</a>
+            <a class="btn-sm btn-primary" href="/books/register/">Register a book</a>
+
             <div class="nav-group relative">
-              <button type="button" class="nav-trigger flex items-center gap-2 rounded-full py-1 pl-1 pr-2.5 text-sm font-medium text-gray-800 hover:bg-gray-100">
-                <span class="grid h-7 w-7 place-items-center rounded-full bg-blue-100 text-[11px] font-bold text-blue-800">MK</span>
+              <button class="flex items-center gap-2 rounded-full py-1 pl-1 pr-2.5 text-sm font-medium text-gray-800 hover:bg-gray-100" type="button">
+                <span class="avatar">MK</span>
                 m.kowalski
-                <svg class="chev h-3 w-3 fill-gray-400" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8.5 1.5 4h9L6 8.5Z"/></svg>
+                <svg class="chev"><use href="#i-chevron"/></svg>
               </button>
-              <div class="nav-panel absolute left-1/2 top-full z-10 w-52 pt-2">
-                <ul class="rounded-xl border border-gray-200 bg-white p-1.5 text-sm shadow-xl shadow-black/[0.07]">
-                  <li><a href="/dashboard" class="block rounded-lg px-3 py-2 text-gray-800 hover:bg-gray-50">Dashboard</a></li>
-                  <li><a href="/shelf/" class="block rounded-lg px-3 py-2 text-gray-800 hover:bg-gray-50">My shelf</a></li>
-                  <li><a href="/settings/" class="block rounded-lg px-3 py-2 text-gray-800 hover:bg-gray-50">Settings</a></li>
-                  <li class="mt-1 border-t border-gray-100 pt-1"><a href="/logout" class="block rounded-lg px-3 py-2 text-gray-500 hover:bg-gray-50">Sign out</a></li>
+              <div class="nav-panel w-52 pt-2">
+                <ul class="panel-card text-sm">
+                  <li><a class="panel-link" href="/dashboard">Dashboard</a></li>
+                  <li><a class="panel-link" href="/shelf/">My shelf</a></li>
+                  <li><a class="panel-link" href="/settings/">Settings</a></li>
+                  <li class="panel-rule"><a class="panel-link text-gray-500" href="/logout">Sign out</a></li>
                 </ul>
               </div>
             </div>
@@ -294,58 +378,87 @@
       </div>
     </section>
 
-    <!-- What changed vs. the current header -->
     <section class="pb-20">
-      <h2 class="text-sm font-semibold uppercase tracking-[0.1em] text-gray-500">What changed</h2>
+      <h2 class="caps">What changed</h2>
       <dl class="mt-4 divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+
         <div class="grid gap-1 p-5 sm:grid-cols-3 sm:gap-4">
           <dt class="text-sm font-semibold text-gray-900">Mobile menu</dt>
-          <dd class="text-sm text-gray-600 sm:col-span-2">The current header has no breakpoint below <code class="text-gray-800">md</code>: the nav and both buttons stay on one 56px row and overflow. Added a hamburger and a collapsible panel with nested sub-lists.</dd>
+          <dd class="text-sm text-gray-600 sm:col-span-2">
+            The current header has no breakpoint below <code class="code">md</code>: nav and both buttons stay on
+            one 56px row and overflow. Added a hamburger and a collapsible panel with nested sub-lists.
+          </dd>
         </div>
+
         <div class="grid gap-1 p-5 sm:grid-cols-3 sm:gap-4">
           <dt class="text-sm font-semibold text-gray-900">Sub-menus</dt>
-          <dd class="text-sm text-gray-600 sm:col-span-2"><code class="text-gray-800">MenuItem.children</code> is prefetched in <code class="text-gray-800">render_menu</code> but never rendered. <code class="text-gray-800">menu.html</code> now recurses into a dropdown panel.</dd>
+          <dd class="text-sm text-gray-600 sm:col-span-2">
+            <code class="code">MenuItem.children</code> is prefetched in <code class="code">render_menu</code> but
+            never rendered. <code class="code">menu.html</code> should recurse into a dropdown panel.
+          </dd>
         </div>
+
         <div class="grid gap-1 p-5 sm:grid-cols-3 sm:gap-4">
           <dt class="text-sm font-semibold text-gray-900">URLs</dt>
-          <dd class="text-sm text-gray-600 sm:col-span-2">The template prints <code class="text-gray-800">{{ item.url }}</code>, so items using <code class="text-gray-800">named_url</code> render an empty href. Switch to <code class="text-gray-800">{{ item.get_url }}</code>.</dd>
+          <dd class="text-sm text-gray-600 sm:col-span-2">
+            The template prints <code class="code">{{ item.url }}</code>, so items that use
+            <code class="code">named_url</code> render an empty href. Use <code class="code">{{ item.get_url }}</code>.
+          </dd>
         </div>
+
         <div class="grid gap-1 p-5 sm:grid-cols-3 sm:gap-4">
           <dt class="text-sm font-semibold text-gray-900">Active state</dt>
-          <dd class="text-sm text-gray-600 sm:col-span-2">Current item marked with <code class="text-gray-800">aria-current="page"</code> plus a blue underline, instead of no state at all.</dd>
+          <dd class="text-sm text-gray-600 sm:col-span-2">
+            Current item marked with <code class="code">aria-current="page"</code> and a blue underline,
+            instead of no state at all.
+          </dd>
         </div>
+
         <div class="grid gap-1 p-5 sm:grid-cols-3 sm:gap-4">
           <dt class="text-sm font-semibold text-gray-900">Layout</dt>
-          <dd class="text-sm text-gray-600 sm:col-span-2">Dropped <code class="text-gray-800">flex-1</code> on both sides and the <code class="text-gray-800">&amp;nbsp;&amp;nbsp;&amp;nbsp;</code> spacer; brand / nav / actions now sit on gap-based flex with <code class="text-gray-800">ml-auto</code>.</dd>
+          <dd class="text-sm text-gray-600 sm:col-span-2">
+            Dropped <code class="code">flex-1</code> on both sides and the
+            <code class="code">&amp;nbsp;&amp;nbsp;&amp;nbsp;</code> spacer; brand / nav / actions now sit on
+            gap-based flex with <code class="code">ml-auto</code>.
+          </dd>
         </div>
       </dl>
     </section>
   </div>
 </main>
 
-<script>
-  // Mobile panel
-  const toggle = document.getElementById('menu-toggle');
-  const panel = document.getElementById('mobile-menu');
-  toggle.addEventListener('click', () => {
-    const open = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!open));
-    panel.hidden = open;
-  });
 
-  // Mobile sub-menus
-  document.querySelectorAll('.sub-toggle').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const list = btn.nextElementSibling;
-      const open = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!open));
-      list.hidden = open;
-      btn.querySelector('.chev').style.transform = open ? '' : 'rotate(180deg)';
+<!-- ═══════════════════════════════════════════════════════════════════
+     6. SCRIPT — mobile panel only; desktop dropdowns are pure CSS
+     ═══════════════════════════════════════════════════════════════════ -->
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const panel  = document.getElementById('mobile-menu');
+
+  /** Flip aria-expanded on `button` and show/hide `target` accordingly. */
+  function toggleDisclosure(button, target) {
+    const isOpen = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', String(!isOpen));
+    target.hidden = isOpen;
+    return !isOpen;
+  }
+
+  // Hamburger
+  toggle.addEventListener('click', () => toggleDisclosure(toggle, panel));
+
+  // Mobile sub-menus — each button is followed by its <ul class="m-sublist">
+  document.querySelectorAll('.m-toggle').forEach((button) => {
+    button.addEventListener('click', () => {
+      const isOpen = toggleDisclosure(button, button.nextElementSibling);
+      button.querySelector('.chev').style.transform = isOpen ? 'rotate(180deg)' : '';
     });
   });
 
-  // Close the mobile panel when the viewport reaches lg
-  matchMedia('(min-width: 1024px)').addEventListener('change', (e) => {
-    if (e.matches) { panel.hidden = true; toggle.setAttribute('aria-expanded', 'false'); }
+  // Reaching lg hands navigation back to the desktop bar
+  matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
+    if (event.matches) {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
   });
 </script>

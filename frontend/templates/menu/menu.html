@@ -1,7 +1,12 @@
-<ul class="menu">
-  {% for item in items %}
-    <li>
-      <a href="{{ item.url }}">{{ item.title }}</a>
-    </li>
-  {% endfor %}
-</ul>
+      <nav class="hidden lg:flex lg:flex-1 lg:items-center" aria-label="Main">
+        <ul class="flex items-center gap-0.5 text-sm font-medium">
+        {% for item in items %}
+          <li>
+            <a href="{{ item.get_url }}" aria-current="page"
+               class="relative flex h-9 items-center rounded-lg px-3 text-blue-700 after:absolute after:inset-x-3 after:bottom-1 after:h-0.5 after:rounded-full after:bg-blue-700">
+              {{ item.title }}
+            </a>
+          </li>
+        {% endfor %}
+        </ul>
+      </nav>

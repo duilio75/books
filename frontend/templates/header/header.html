@@ -1,40 +1,93 @@
-  {% load menu_tags static %}
-  <header class="fixed top-8 z-30 w-full md:top-8">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6">
-      <div class="relative flex h-14 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white/90 px-3 shadow-lg shadow-black/[0.03] backdrop-blur-xs">
-        
-        <div class="flex flex-1 items-center">
-          <a class="inline-flex" aria-label="Cruip" href="/">
-            <img src="{% static 'vendors/images/TB_Logo.png' %}" alt="Logo" width="62" height="62" />
-          </a>&nbsp;&nbsp;&nbsp;
-          {% render_menu "main" %}
+{% load menu_tags static %}
+
+<header class="fixed top-0 z-40 w-full md:top-6">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="relative flex h-16 items-center gap-3 border-b border-gray-200 bg-white/95 px-3 shadow-lg shadow-black/[0.04] backdrop-blur-md md:rounded-2xl md:border">
+
+      <!-- Brand -->
+      <a href="/" aria-label="Traveling Books — home" class="flex shrink-0 items-center gap-2.5 rounded-lg pr-2">
+        <img src="{% static 'vendors/images/TB_Logo.png' %}" alt="Logo" width="62" height="62" />
+        <span class="hidden text-[15px] font-semibold leading-tight tracking-tight text-blue-700 sm:block">
+          TravelingBooks
+        </span>
+      </a>
+      {% render_menu "main" %}
+      <!-- ============ Right cluster ============ -->
+      <div class="ml-auto flex items-center gap-2">
+
+        <!-- Search (templates/search) -->
+        <form action="/search/" method="get" class="hidden xl:block">
+          <label for="q" class="sr-only">Search books</label>
+          <div class="relative">
+            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 fill-gray-400" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2a5 5 0 1 0 3.06 8.95l3 2.99 1.4-1.41-2.98-3A5 5 0 0 0 7 2Zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"/></svg>
+            <input id="q" name="q" type="search" placeholder="Title, author, BCID…"
+                   class="h-9 w-56 rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-3 text-sm text-gray-900 placeholder-gray-400 shadow-xs transition-colors focus:border-blue-300 focus:bg-white focus:ring-0">
+          </div>
+        </form>
+
+        <!-- Search icon-only below xl -->
+        <a href="/search/" aria-label="Search" class="grid h-9 w-9 place-items-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 xl:hidden">
+          <svg class="h-4 w-4 fill-current" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2a5 5 0 1 0 3.06 8.95l3 2.99 1.4-1.41-2.98-3A5 5 0 0 0 7 2Zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"/></svg>
+        </a>
+
+        {% if user.is_authenticated %} 
+        <div class="mt-2 grid grid-cols-2 gap-2 border-t border-gray-100 p-2 pt-3 sm:hidden">
+          <a href="/signin" class="btn-sm bg-white py-2 text-gray-800 ring-1 ring-gray-200">Login</a>
+          <a href="/signup" class="btn-sm bg-gray-800 py-2 text-gray-200">Register</a>
         </div>
-       
-        <ul class="flex flex-1 items-center justify-end gap-3">
-          {% if user.is_authenticated %}
-          <li>
-            <a class="btn-sm bg-white text-gray-800 shadow-sm hover:bg-gray-50" href="/dashboard">
-              Dashboard
-            </a>
-          </li>
-          <li>
-            <a class="btn-sm bg-gray-800 text-gray-200 shadow-sm hover:bg-gray-900" href="/logout">
-              Sign out
-            </a>
-          </li>
-          {% else %}
-          <li>
-            <a class="btn-sm bg-white text-gray-800 shadow-sm hover:bg-gray-50" href="/signin">
-              Login
-            </a>
-          </li>
-          <li>
-            <a class="btn-sm bg-gray-800 text-gray-200 shadow-sm hover:bg-gray-900" href="/signup">
-              Register
-            </a>
-          </li>
-          {% endif %}
-        </ul>
+        {% else %}
+        <div class="hidden items-center gap-2 sm:flex">
+          <a href="/signin" class="btn-sm bg-white text-gray-800 ring-1 ring-gray-200 hover:bg-gray-50">Login</a>
+          <a href="/signup" class="btn-sm bg-gray-800 text-gray-200 hover:bg-gray-900">Register</a>
+        </div>
+        {% endif %}
+        <!-- Mobile toggle -->
+        <button id="menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false"
+                class="grid h-9 w-9 place-items-center rounded-lg text-gray-700 hover:bg-gray-100 lg:hidden">
+          <span class="sr-only">Open main menu</span>
+          <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14v2H3V5Zm0 4h14v2H3V9Zm0 4h14v2H3v-2Z"/></svg>
+        </button>
       </div>
     </div>
-  </header>
+
+    <!-- ============ Mobile panel ============ -->
+    <div id="mobile-menu" hidden class="mt-2 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-black/[0.07] lg:hidden">
+      <nav aria-label="Mobile" class="p-2">
+        <ul class="flex flex-col gap-0.5 text-sm font-medium">
+          <li><a href="/" aria-current="page" class="block rounded-lg bg-blue-50 px-3 py-2.5 text-blue-700">Home</a></li>
+
+          <li>
+            <button type="button" class="sub-toggle flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50" aria-expanded="false">
+              Books
+              <svg class="chev h-3 w-3 fill-gray-400 transition-transform" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8.5 1.5 4h9L6 8.5Z"/></svg>
+            </button>
+            <ul hidden class="sub-list mt-0.5 ml-3 flex flex-col gap-0.5 border-l border-gray-200 pl-3 font-normal">
+              <li><a href="/books/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Browse the catalog</a></li>
+              <li><a href="/books/register/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Register a book</a></li>
+              <li><a href="/books/release/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Release into the wild</a></li>
+              <li><a href="/map/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Book map</a></li>
+            </ul>
+          </li>
+
+          <li><a href="/journeys/" class="block rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50">Journeys</a></li>
+
+          <li>
+            <button type="button" class="sub-toggle flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50" aria-expanded="false">
+              Community
+              <svg class="chev h-3 w-3 fill-gray-400 transition-transform" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8.5 1.5 4h9L6 8.5Z"/></svg>
+            </button>
+            <ul hidden class="sub-list mt-0.5 ml-3 flex flex-col gap-0.5 border-l border-gray-200 pl-3 font-normal">
+              <li><a href="/members/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Members</a></li>
+              <li><a href="/forum/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Forum</a></li>
+              <li><a href="/events/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Meet-ups</a></li>
+            </ul>
+          </li>
+
+          <li><a href="/about/" class="block rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50">About</a></li>
+        </ul>
+
+      
+      </nav>
+    </div>
+  </div>
+</header>
