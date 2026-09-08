@@ -1,0 +1,426 @@
+<title>Traveling Books Shelf</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     1. DESIGN TOKENS + COMPONENT CLASSES
+     Same approach as header-preview.html: every long Tailwind chain is
+     named once here, so the markup below stays readable.
+
+     Palette note — the live section uses blue-700→blue-600 with
+     gray-900/80 cards. Those two are too close in value, so the cards
+     read as smudges rather than objects. This deepens the ground and
+     lifts the card, keeping the same brand hue.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style type="text/tailwindcss">
+  @theme {
+    --font-inter: Inter, ui-sans-serif, system-ui, sans-serif;
+    /* Swap this one token for Inter to stay on the project's single-face
+       system; it is the only place the display face is named. */
+    --font-display: Fraunces, ui-serif, Georgia, serif;
+
+    --color-shelf-ink:    #0a1730;  /* band, top          */
+    --color-shelf-deep:   #173a7e;  /* band, bottom       */
+    --color-shelf-card:   #0f2148;  /* card surface       */
+    --color-shelf-line:   #2b447e;  /* hairline           */
+    --color-shelf-text:   #c3cee4;  /* body on the band   */
+    --color-shelf-muted:  #8a9ac0;  /* meta on the band   */
+    --color-shelf-star:   #f5b524;  /* rating only        */
+  }
+
+  @layer components {
+
+    /* ---- Band + shell ------------------------------------------------ */
+    .shell      { @apply mx-auto max-w-6xl px-4 sm:px-6; }
+    .band       { @apply relative overflow-hidden
+                         bg-linear-to-b from-shelf-ink to-shelf-deep; }
+    .band-inner { @apply relative py-14 md:py-20; }
+    /* One soft light source behind the grid — replaces the pulsing glow
+       ring that used to sit around the 110px logo. */
+    .band-glow  { @apply pointer-events-none absolute left-1/2 top-0 h-[420px] w-[820px]
+                         -translate-x-1/2 -translate-y-1/3 rounded-full opacity-45 blur-[130px]
+                         bg-[radial-gradient(closest-side,#2f6bd8,transparent)]; }
+
+    /* ---- Heading block ----------------------------------------------- */
+    .band-head  { @apply flex flex-col gap-6 pb-10 md:flex-row md:items-end md:justify-between; }
+    .eyebrow    { @apply mb-3 flex items-center gap-2.5 text-[11px] font-semibold uppercase
+                         tracking-[0.14em] text-shelf-muted; }
+    .brand-chip { @apply grid h-7 w-7 place-items-center rounded-lg bg-white/10 text-[11px]
+                         font-bold tracking-tight text-white ring-1 ring-white/15; }
+    .band-title { @apply font-display text-[2rem] font-semibold leading-[1.15] tracking-[-0.01em]
+                         text-white text-balance md:text-[2.6rem]; }
+    .band-sub   { @apply mt-3 max-w-[46ch] text-[15px] leading-relaxed text-shelf-text; }
+    .band-link  { @apply inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-shelf-line
+                         bg-white/[0.04] px-3.5 py-2 text-sm font-medium text-white
+                         transition-colors hover:border-white/35 hover:bg-white/10; }
+
+    /* ---- The shelf --------------------------------------------------- */
+    .shelf      { @apply grid gap-5 sm:grid-cols-2 lg:grid-cols-4; }
+    .book       { @apply flex flex-col overflow-hidden rounded-xl border border-shelf-line
+                         bg-shelf-card transition duration-200
+                         hover:-translate-y-1 hover:border-white/30
+                         hover:shadow-[0_18px_40px_-16px_rgba(3,10,28,0.9)]; }
+
+    /* Covers keep the 2:3 a book actually is, so four of them line up
+       instead of being cropped to an arbitrary h-56. */
+    .book-cover { @apply relative aspect-[2/3] overflow-hidden bg-[#0b1a38]; }
+    .cover-art  { @apply flex h-full w-full flex-col justify-between p-4 text-white; }
+    .cover-name { @apply font-display text-[15px] font-semibold leading-tight text-balance; }
+    .cover-by   { @apply text-[10px] font-medium uppercase tracking-[0.12em] opacity-70; }
+    .cover-rule { @apply h-px w-8 bg-white/45; }
+    .scrim      { @apply pointer-events-none absolute inset-x-0 bottom-0 h-24
+                         bg-linear-to-t from-black/70 to-transparent; }
+    .rank       { @apply absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 text-[11px]
+                         font-semibold tabular-nums text-white backdrop-blur-sm ring-1 ring-white/20; }
+
+    /* ---- Card body --------------------------------------------------- */
+    .book-body  { @apply flex flex-1 flex-col gap-1 p-4; }
+    .book-title { @apply font-display text-[17px] font-semibold leading-snug text-white text-balance; }
+    .book-by    { @apply text-[13px] text-shelf-muted; }
+    .book-meta  { @apply mt-auto flex items-center gap-2 pt-3 text-[12px] text-shelf-muted; }
+    .score      { @apply font-semibold tabular-nums text-white; }
+    .dot        { @apply text-shelf-line; }
+
+    /* ---- Footnote ---------------------------------------------------- */
+    .band-note  { @apply mt-8 text-[12px] text-shelf-muted; }
+  }
+</style>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     2. BEHAVIOUR — the few rules Tailwind utilities cannot express
+     ═══════════════════════════════════════════════════════════════════ -->
+<style>
+  :root { color-scheme: light; --page-bg: #f7f8fa; --page-ink: #1f2937; --page-soft: #6b7280; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --page-bg: #070e1e; --page-ink: #e5e9f2; --page-soft: #94a3b8; }
+  }
+  :root[data-theme="dark"] { --page-bg: #070e1e; --page-ink: #e5e9f2; --page-soft: #94a3b8; }
+
+  body {
+    background: var(--page-bg);
+    color: var(--page-ink);
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Fractional stars: one grey track, one gold copy clipped to the score. */
+  .stars { position: relative; display: inline-flex; line-height: 0; }
+  .stars-track,
+  .stars-fill { display: flex; gap: 1px; }
+  .stars-track { color: #35507f; }
+  .stars-fill {
+    position: absolute; inset: 0; overflow: hidden;
+    width: var(--pct); color: #f5b524;
+  }
+  .star { width: 13px; height: 13px; flex: none; fill: currentColor; }
+
+  a:focus-visible { outline: 2px solid #7dabff; outline-offset: 3px; border-radius: .75rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+
+  /* Preview-only chrome — not part of the section. */
+  .sheet { max-width: 72rem; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+  .sheet-kicker { font-size: 11px; font-weight: 600; letter-spacing: .14em;
+                  text-transform: uppercase; color: var(--page-soft); }
+  .sheet-title { font-family: Fraunces, ui-serif, Georgia, serif; font-size: 1.5rem;
+                 font-weight: 600; margin: .4rem 0 .5rem; }
+  .sheet-note { font-size: 14px; line-height: 1.65; color: var(--page-soft); max-width: 62ch; }
+  .changes { margin: 1.5rem 0 2.5rem; padding: 0; list-style: none; display: grid; gap: .55rem;
+             font-size: 13.5px; line-height: 1.6; color: var(--page-soft); max-width: 66ch; }
+  .changes li { display: grid; grid-template-columns: 1.1rem 1fr; gap: .6rem; }
+  .changes b { color: var(--page-ink); font-weight: 600; }
+  .tick { color: #2f6bd8; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92em;
+         background: color-mix(in srgb, var(--page-ink) 9%, transparent);
+         padding: .1em .35em; border-radius: .3rem; color: var(--page-ink); }
+</style>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     3. ICON SPRITE
+     ═══════════════════════════════════════════════════════════════════ -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <symbol id="i-star" viewBox="0 0 20 20">
+    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 0 0 .951.69h4.163c.969 0 1.371 1.24.588 1.81l-3.368 2.447a1 1 0 0 0-.363 1.118l1.287 3.957c.299.922-.756 1.688-1.54 1.118l-3.367-2.446a1 1 0 0 0-1.176 0l-3.367 2.446c-.784.57-1.838-.196-1.539-1.118l1.286-3.957a1 1 0 0 0-.363-1.118L2.06 9.385c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 0 0 .951-.69z"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M8.8 3.3 13.5 8l-4.7 4.7-1.2-1.2 2.7-2.7H2.5V7.2h7.8L7.6 4.5l1.2-1.2Z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 3h7a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3H4V3Zm16 0h-4a3 3 0 0 0-3 3v15a3 3 0 0 1 3-3h4V3Z"/></symbol>
+</svg>
+
+
+<div class="sheet">
+  <p class="sheet-kicker">Design preview</p>
+  <h1 class="sheet-title">“Most reviewed books” — restyled</h1>
+  <p class="sheet-note">
+    A drop-in replacement for the featured-books band in
+    <code>frontend/templates/partials/home.html</code>. Same content, same brand hue,
+    same Tailwind utilities the project already ships. Covers below are drawn in CSS
+    because this file is standalone — in the template they stay <code>book.cover_url</code>.
+  </p>
+
+  <ul class="changes">
+    <li><span class="tick">→</span><span><b>The ground now separates from the cards.</b> blue-700→blue-600 against gray-900/80 cards was only a few steps of value apart; the band goes deeper so a card reads as an object sitting on it.</span></li>
+    <li><span class="tick">→</span><span><b>Covers keep their 2:3 ratio.</b> <code>h-56 object-cover</code> crops every jacket differently; four books now line up on a common baseline.</span></li>
+    <li><span class="tick">→</span><span><b>The cover leads, the rating follows.</b> The star row used to sit above the image, so the eye met metadata before the book.</span></li>
+    <li><span class="tick">→</span><span><b>Rank is on the cover.</b> The section is a ranking by review count, so the numeral carries real information — it isn't decoration.</span></li>
+    <li><span class="tick">→</span><span><b>A missing cover no longer breaks the row.</b> <code>{% if book.cover_url %}</code> has no <code>else</code> today, so a book without a jacket collapses its card. The fourth card shows the fallback.</span></li>
+    <li><span class="tick">→</span><span><b>The logo is used at its real size.</b> A 110×79 PNG was sitting inside a hero-scale pulsing glow ring with no job; it becomes the eyebrow's brand chip, and the glow becomes one soft light behind the grid.</span></li>
+    <li><span class="tick">→</span><span><b>There's a way out of the section.</b> “Browse all books” gives the band a next step.</span></li>
+  </ul>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     4. THE SECTION
+     Maps 1:1 onto the {% if featured_books %} block in
+     templates/partials/home.html — the Django port is at the foot of
+     this file.
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="band">
+  <div class="band-glow"></div>
+  <div class="shell">
+    <div class="band-inner">
+
+      <!-- Heading ---------------------------------------------------- -->
+      <div class="band-head">
+        <div>
+          <p class="eyebrow">
+            <span class="brand-chip">TB</span>
+            Reader favorites
+          </p>
+          <h2 class="band-title">Most reviewed books</h2>
+          <p class="band-sub">
+            The four titles this community keeps coming back to — and the ones
+            most likely to change how you travel next.
+          </p>
+        </div>
+
+        <a class="band-link" href="/books">
+          Browse all books
+          <svg class="h-4 w-4" aria-hidden="true"><use href="#i-arrow"/></svg>
+        </a>
+      </div>
+
+      <!-- Grid — {% for book in featured_books %} --------------------- -->
+      <div class="shelf">
+
+        <!-- 1 ------------------------------------------------------- -->
+        <a class="book" href="/book/the-art-of-travel">
+          <div class="book-cover">
+            <div class="cover-art" style="background:linear-gradient(150deg,#1c3f7d,#0d2350 55%,#3b2f6b)">
+              <span class="cover-by">Alain de Botton</span>
+              <div>
+                <span class="cover-rule mb-3 block"></span>
+                <span class="cover-name">The Art of Travel</span>
+              </div>
+            </div>
+            <div class="scrim"></div>
+            <span class="rank">#1</span>
+          </div>
+          <div class="book-body">
+            <h3 class="book-title">The Art of Travel</h3>
+            <p class="book-by">Alain de Botton · 2002</p>
+            <p class="book-meta">
+              <span class="stars" style="--pct:92%" role="img" aria-label="Rated 4.6 out of 5">
+                <span class="stars-track" aria-hidden="true">
+                  <svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg>
+                </span>
+                <span class="stars-fill" aria-hidden="true">
+                  <svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg>
+                </span>
+              </span>
+              <span class="score">4.6</span>
+              <span class="dot">·</span>
+              <span>128 reviews</span>
+            </p>
+          </div>
+        </a>
+
+        <!-- 2 ------------------------------------------------------- -->
+        <a class="book" href="/book/vagabonding">
+          <div class="book-cover">
+            <div class="cover-art" style="background:linear-gradient(150deg,#b2542a,#6d2718 60%,#31160f)">
+              <span class="cover-by">Rolf Potts</span>
+              <div>
+                <span class="cover-rule mb-3 block"></span>
+                <span class="cover-name">Vagabonding</span>
+              </div>
+            </div>
+            <div class="scrim"></div>
+            <span class="rank">#2</span>
+          </div>
+          <div class="book-body">
+            <h3 class="book-title">Vagabonding</h3>
+            <p class="book-by">Rolf Potts · 2002</p>
+            <p class="book-meta">
+              <span class="stars" style="--pct:88%" role="img" aria-label="Rated 4.4 out of 5">
+                <span class="stars-track" aria-hidden="true">
+                  <svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg>
+                </span>
+                <span class="stars-fill" aria-hidden="true">
+                  <svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg>
+                </span>
+              </span>
+              <span class="score">4.4</span>
+              <span class="dot">·</span>
+              <span>96 reviews</span>
+            </p>
+          </div>
+        </a>
+
+        <!-- 3 ------------------------------------------------------- -->
+        <a class="book" href="/book/the-songlines">
+          <div class="book-cover">
+            <div class="cover-art" style="background:linear-gradient(150deg,#2f6f5e,#12362f 58%,#0b1f1c)">
+              <span class="cover-by">Bruce Chatwin</span>
+              <div>
+                <span class="cover-rule mb-3 block"></span>
+                <span class="cover-name">The Songlines</span>
+              </div>
+            </div>
+            <div class="scrim"></div>
+            <span class="rank">#3</span>
+          </div>
+          <div class="book-body">
+            <h3 class="book-title">The Songlines</h3>
+            <p class="book-by">Bruce Chatwin · 1987</p>
+            <p class="book-meta">
+              <span class="stars" style="--pct:84%" role="img" aria-label="Rated 4.2 out of 5">
+                <span class="stars-track" aria-hidden="true">
+                  <svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg>
+                </span>
+                <span class="stars-fill" aria-hidden="true">
+                  <svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg>
+                </span>
+              </span>
+              <span class="score">4.2</span>
+              <span class="dot">·</span>
+              <span>74 reviews</span>
+            </p>
+          </div>
+        </a>
+
+        <!-- 4 — no cover_url: the fallback --------------------------- -->
+        <a class="book" href="/book/the-old-patagonian-express">
+          <div class="book-cover">
+            <div class="cover-art items-center justify-center gap-3 text-shelf-muted"
+                 style="background:#0c1c3c">
+              <svg class="h-9 w-9 opacity-45" aria-hidden="true" fill="currentColor"><use href="#i-book"/></svg>
+              <span class="text-[11px] font-medium uppercase tracking-[0.12em]">No cover yet</span>
+            </div>
+            <div class="scrim"></div>
+            <span class="rank">#4</span>
+          </div>
+          <div class="book-body">
+            <h3 class="book-title">The Old Patagonian Express</h3>
+            <p class="book-by">Paul Theroux · 1979</p>
+            <p class="book-meta">
+              <span class="stars" style="--pct:82%" role="img" aria-label="Rated 4.1 out of 5">
+                <span class="stars-track" aria-hidden="true">
+                  <svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg>
+                </span>
+                <span class="stars-fill" aria-hidden="true">
+                  <svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg><svg class="star"><use href="#i-star"/></svg>
+                </span>
+              </span>
+              <span class="score">4.1</span>
+              <span class="dot">·</span>
+              <span>61 reviews</span>
+            </p>
+          </div>
+        </a>
+
+      </div>
+
+      <p class="band-note">Ranked by number of reviews.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     5. DJANGO PORT
+     Drop-in for the {% if featured_books %} block in
+     templates/partials/home.html (currently lines 57-104). The component
+     classes above would move into
+     frontend/src/styles/additional-styles/utility-patterns.css; the
+     @theme colors into frontend/src/styles/index.css.
+     ═══════════════════════════════════════════════════════════════════
+
+{% if featured_books %}
+<section class="band">
+  <div class="band-glow"></div>
+  <div class="shell">
+    <div class="band-inner">
+      <div class="band-head">
+        <div>
+          <p class="eyebrow">
+            <img src="{% static 'vendors/images/TB_Logo.png' %}" alt="" width="28" height="20" class="h-5 w-auto" />
+            Reader favorites
+          </p>
+          <h2 class="band-title">Most reviewed books</h2>
+          <p class="band-sub">
+            The four titles this community keeps coming back to — and the ones
+            most likely to change how you travel next.
+          </p>
+        </div>
+        <!-- NOTE: there is no book-list *page* route today — backend/urls.py only
+             registers book-page-detail. Either add one, or point this at an
+             existing BasicPage: {% url 'basic-page-detail' 'books' %} -->
+        <a class="band-link" href="/books/">
+          Browse all books
+          <svg class="h-4 w-4" aria-hidden="true"><use href="#i-arrow"/></svg>
+        </a>
+      </div>
+
+      <div class="shelf" data-aos="fade-up">
+        {% for book in featured_books %}
+        <a class="book" href="{% url 'book-page-detail' book.url_alias %}">
+          <div class="book-cover">
+            {% if book.cover_url %}
+              <img class="h-full w-full object-cover" src="{{ book.cover_url }}"
+                   alt="{{ book.title }}" loading="lazy" decoding="async" />
+            {% else %}
+              <div class="cover-art items-center justify-center gap-3 text-shelf-muted" style="background:#0c1c3c">
+                <svg class="h-9 w-9 opacity-45" aria-hidden="true" fill="currentColor"><use href="#i-book"/></svg>
+                <span class="text-[11px] font-medium uppercase tracking-[0.12em]">No cover yet</span>
+              </div>
+            {% endif %}
+            <div class="scrim"></div>
+            <span class="rank">#{{ forloop.counter }}</span>
+          </div>
+          <div class="book-body">
+            <h3 class="book-title">{{ book.title }}</h3>
+            <p class="book-by">{{ book.author }}{% if book.published_year %} · {{ book.published_year }}{% endif %}</p>
+            <p class="book-meta">
+              {% widthratio book.average_rating 5 100 as rating_pct %}
+              <span class="stars" style="--pct:{{ rating_pct }}%" role="img"
+                    aria-label="Rated {{ book.average_rating|floatformat:1 }} out of 5">
+                <span class="stars-track" aria-hidden="true">{% include "partials/_stars.html" %}</span>
+                <span class="stars-fill"  aria-hidden="true">{% include "partials/_stars.html" %}</span>
+              </span>
+              <span class="score">{{ book.average_rating|floatformat:1 }}</span>
+              <span class="dot">·</span>
+              <span>{{ book.review_count }} review{{ book.review_count|pluralize }}</span>
+            </p>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+
+      <p class="band-note">Ranked by number of reviews.</p>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+     partials/_stars.html is just the five <svg><use href="#i-star"/></svg>
+     tags, and the #i-star / #i-arrow / #i-book sprite goes in base.html.
+     ═══════════════════════════════════════════════════════════════════ -->

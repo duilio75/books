@@ -22,15 +22,18 @@ class SourceSerializer(serializers.ModelSerializer):
 
 class BookReviewSerializer(serializers.ModelSerializer):
     description = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    # Always the user's id, or 0 when the review was left anonymously. Set from
+    # request.user in the view, never from the payload.
+    owner = serializers.IntegerField(source="owner_ref", read_only=True)
 
     class Meta:
         model = BookReview
         fields = [
-            "id", "book", "volume_id", "title", "author",
+            "id", "book", "owner", "volume_id", "title", "author",
             "cover_url", "rating", "review_text", "created_at",
             "description",
         ]
-        read_only_fields = ["id", "book", "created_at"]
+        read_only_fields = ["id", "book", "owner", "created_at"]
 
     def validate_rating(self, value):
         if not 1 <= value <= 5:

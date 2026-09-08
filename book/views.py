@@ -4,6 +4,8 @@ from django.db.models import Avg, Count
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from rest_framework import generics
+from rest_framework.authentication import SessionAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from api.models import ContentBlock
 from common.http import session_with_retries
 from .models import Book
@@ -79,7 +81,9 @@ def google_books_search(request):
 
 class BookReviewCreate(generics.CreateAPIView):
     serializer_class = BookReviewSerializer
-    authentication_classes = []
+    # Anyone may post a review, but authenticate anyway so a logged-in visitor is
+    # recorded as the owner instead of falling through to anonymous.
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
     permission_classes = []
 
     def perform_create(self, serializer):
@@ -94,7 +98,8 @@ class BookReviewCreate(generics.CreateAPIView):
                 "description": description,
             },
         )
-        serializer.save(book=book)
+        user = self.request.user
+        serializer.save(book=book, owner=user if user.is_authenticated else None)
 
 
 def book_page_detail(request, url_alias):

@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 from tinymce.models import HTMLField
@@ -57,8 +58,19 @@ class BookTopic(models.Model):
 
 
 class BookReview(models.Model):
+    # Reviews may be left without logging in, so `owner` is nullable. Callers that
+    # need a plain number read `owner_ref`, which is 0 for an anonymous review.
+    ANONYMOUS_OWNER_ID = 0
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="reviews")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="book_reviews",
+    )
     volume_id = models.CharField(max_length=50)
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255, blank=True)
@@ -69,6 +81,11 @@ class BookReview(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+    @property
+    def owner_ref(self):
+        """The owner's user id, or 0 when the review was left anonymously."""
+        return self.owner_id or self.ANONYMOUS_OWNER_ID
 
     def __str__(self):
         return f"{self.title} — {self.rating}/5"
