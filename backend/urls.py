@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from api.views import CreateUserView, basic_page_detail
-from book.views import book_page_detail, home_page_detail
+from book.views import book_page_detail, books_page, home_page_detail, search_page
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -19,6 +19,8 @@ urlpatterns = [
     path("api/", include("book.urls")),
     path("tinymce/", include("tinymce.urls")),
     path("book/<slug:url_alias>/", book_page_detail, name="book-page-detail"),
+    path("books/", books_page, name="books"),
+    path("search/", search_page, name="search"),
     # Catch-all: render a BasicPage by its url_alias, e.g. /prima-pagina-test/
     # Must stay LAST so it doesn't shadow admin/, api/, tinymce/, etc.
     path("<slug:url_alias>/", basic_page_detail, name="basic-page-detail"),

@@ -23,10 +23,17 @@ class BookSearch {
     document.querySelectorAll("[data-dialog-close]").forEach((btn) => {
       btn.addEventListener("click", () => this.dialog.close());
     });
+
+    // /search/?q=... renders the input pre-filled: run that search right away.
+    if (this.input.value.trim()) this.runSearch();
   }
 
-  async search(e) {
+  search(e) {
     e.preventDefault();
+    return this.runSearch();
+  }
+
+  async runSearch() {
     const query = this.input.value.trim();
     if (!query) return;
     this.resultsEl.innerHTML = '<p class="col-span-full text-sm text-gray-500">Searching…</p>';

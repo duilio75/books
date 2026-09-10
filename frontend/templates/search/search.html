@@ -5,6 +5,7 @@
                       id="book-search-input"
                       type="text"
                       placeholder="Search for a book..."
+                      value="{{ search_query|default_if_none:'' }}"
                       class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-800 shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                       autocomplete="off"
                     />

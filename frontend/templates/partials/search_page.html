@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Search books{% endblock %}
+{% block meta_site_name %}<meta name="og:site_name" content="traveling books" />{% endblock %}
+{% block meta_type %}<meta name="og:type" content="website" />{% endblock %}
+{% block meta_url %}<meta name="og:url" content="{{ request.build_absolute_uri }}" />{% endblock %}
+{% block meta_title %}<meta name="og:title" content="Search books" />{% endblock %}
+{% block meta_descri %}<meta name="og:description" content="Search for a book, read the reviews or leave your own." />{% endblock %}
+{% block main %}
+<main class="grow">
+  <section class="relative">
+    <div class="pointer-events-none absolute -top-32 left-1/2 ml-145 -translate-x-1/2" aria-hidden="true">
+      <div class="h-80 w-80 rounded-full bg-linear-to-tr from-blue-500 opacity-50 blur-[160px]"></div>
+    </div>
+    <div class="pointer-events-none absolute left-1/2 top-105 -ml-75 -translate-x-1/2" aria-hidden="true">
+      <div class="h-80 w-80 rounded-full bg-linear-to-tr from-blue-500 to-gray-900 opacity-50 blur-[160px]"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <div class="pb-16 pt-28 md:pb-20 md:pt-40">
+        <h1 class="mb-6 border-y py-5 text-center text-4xl font-bold [border-image:linear-gradient(to_right,transparent,--theme(--color-slate-300/.8),transparent)1] md:text-5xl" data-aos="zoom-y-out" data-aos-delay="150">
+          Search books
+        </h1>
+        <p class="mx-auto mb-6 max-w-2xl text-center text-gray-700">
+          Look for a book by title, then read the reviews or leave your own.
+        </p>
+        <div class="mx-auto mt-12">
+          {% include "search/search.html" %}
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

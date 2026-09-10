@@ -27,15 +27,15 @@
           <svg class="h-4 w-4 fill-current" viewBox="0 0 16 16" aria-hidden="true"><path d="M7 2a5 5 0 1 0 3.06 8.95l3 2.99 1.4-1.41-2.98-3A5 5 0 0 0 7 2Zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"/></svg>
         </a>
 
-        {% if user.is_authenticated %} 
-        <div class="mt-2 grid grid-cols-2 gap-2 border-t border-gray-100 p-2 pt-3 sm:hidden">
+        {% if not user.is_authenticated %} 
+        <div class="items-center gap-2 sm:flex">
           <a href="/signin" class="btn-sm bg-white py-2 text-gray-800 ring-1 ring-gray-200">Login</a>
           <a href="/signup" class="btn-sm bg-gray-800 py-2 text-gray-200">Register</a>
         </div>
         {% else %}
-        <div class="hidden items-center gap-2 sm:flex">
-          <a href="/signin" class="btn-sm bg-white text-gray-800 ring-1 ring-gray-200 hover:bg-gray-50">Login</a>
-          <a href="/signup" class="btn-sm bg-gray-800 text-gray-200 hover:bg-gray-900">Register</a>
+        <div class="items-center gap-2 sm:flex">
+          <a href="/dashboard" class="btn-sm bg-white text-gray-800 ring-1 ring-gray-200 hover:bg-gray-50">Dashboard</a>
+          <a href="/logout" class="btn-sm bg-gray-800 text-gray-200 hover:bg-gray-900">Logout</a>
         </div>
         {% endif %}
         <!-- Mobile toggle -->

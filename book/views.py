@@ -1,5 +1,6 @@
 import requests
 from django.conf import settings
+from django.core.paginator import Paginator
 from django.db.models import Avg, Count
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
@@ -111,6 +112,51 @@ def book_page_detail(request, url_alias):
         request,
         "partials/book_page.html",
         {"book": book, "reviews": book.reviews.all()},
+    )
+
+
+BOOKS_PER_PAGE = 50
+
+
+def books_page(request):
+    """Render the paginated catalog at /books/, 50 books per page."""
+    books = (
+        Book.objects.annotate(
+            review_count=Count("reviews"),
+            average_rating=Avg("reviews__rating"),
+        )
+        .order_by("title", "pk")
+    )
+
+    paginator = Paginator(books, BOOKS_PER_PAGE)
+    # An out-of-range or non-numeric ?page= falls back to the last/first page
+    # instead of raising, so a stale link still renders something.
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    return render(
+        request,
+        "partials/books_page.html",
+        {
+            "page_obj": page_obj,
+            "paginator": paginator,
+            "books": page_obj.object_list,
+            # Built here because the template can't pass the current page number
+            # to get_elided_page_range().
+            "page_range": paginator.get_elided_page_range(page_obj.number),
+        },
+    )
+
+
+def search_page(request):
+    """Render the standalone /search/ page.
+
+    Reuses the same include (and JS component) as the home page; an optional
+    ?q= pre-fills the input so the header search box can link here.
+    """
+    return render(
+        request,
+        "partials/search_page.html",
+        {"search_query": request.GET.get("q", "").strip()},
     )
 
 

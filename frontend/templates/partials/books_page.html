@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Books{% endblock %}
+{% block meta_site_name %}<meta name="og:site_name" content="traveling books" />{% endblock %}
+{% block meta_type %}<meta name="og:type" content="website" />{% endblock %}
+{% block meta_url %}<meta name="og:url" content="{{ request.build_absolute_uri }}" />{% endblock %}
+{% block meta_title %}<meta name="og:title" content="Books" />{% endblock %}
+{% block meta_descri %}<meta name="og:description" content="Browse every book in the Traveling Books catalog." />{% endblock %}
+{% block main %}
+<main class="grow">
+  <section class="relative">
+    <div class="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform" aria-hidden="true">
+      <div class="h-80 w-[600px] rounded-full bg-linear-to-tr from-blue-500 opacity-30 blur-[160px]"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <div class="pb-16 pt-28 md:pb-20 md:pt-40">
+
+        <div class="pb-10 text-center">
+          <h1 class="text-4xl font-bold text-gray-900 md:text-5xl">Books</h1>
+          <p class="mt-4 text-gray-600">
+            {{ paginator.count }} book{{ paginator.count|pluralize }} in the catalog{% if paginator.num_pages > 1 %} · page {{ page_obj.number }} of {{ paginator.num_pages }}{% endif %}
+          </p>
+        </div>
+
+        {% if books %}
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {% for book in books %}
+          <a href="{% url 'book-page-detail' book.url_alias %}" class="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white/90 shadow-lg shadow-black/[0.03] backdrop-blur-xs transition duration-200 hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl">
+            {% if book.cover_url %}
+            <img class="h-56 w-full object-cover" src="{{ book.cover_url }}" alt="{{ book.title }}" loading="lazy">
+            {% else %}
+            <div class="flex h-56 w-full items-center justify-center bg-gray-100 text-xs text-gray-400">No cover</div>
+            {% endif %}
+            <div class="flex flex-1 flex-col p-4">
+              <h2 class="font-semibold text-gray-900 group-hover:text-blue-700">{{ book.title }}</h2>
+              <p class="mt-1 text-sm text-gray-500">{{ book.author }}</p>
+              <p class="mt-auto flex items-center gap-1 pt-3 text-xs text-gray-500">
+                {% if book.review_count %}
+                <svg class="relative -top-px h-3.5 w-3.5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 0 0 .951.69h4.163c.969 0 1.371 1.24.588 1.81l-3.368 2.447a1 1 0 0 0-.363 1.118l1.287 3.957c.299.922-.756 1.688-1.54 1.118l-3.367-2.446a1 1 0 0 0-1.176 0l-3.367 2.446c-.784.57-1.838-.196-1.539-1.118l1.286-3.957a1 1 0 0 0-.363-1.118L2.06 9.385c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 0 0 .951-.69z"/>
+                </svg>
+                {{ book.average_rating|floatformat:1 }} · {{ book.review_count }} review{{ book.review_count|pluralize }}
+                {% else %}
+                No reviews yet
+                {% endif %}
+              </p>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+
+        {% if paginator.num_pages > 1 %}
+        <nav class="mt-12 flex items-center justify-center gap-2" aria-label="Pagination">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" rel="prev" class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
+          {% else %}
+          <span class="rounded-lg border border-gray-100 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-300">Previous</span>
+          {% endif %}
+
+          <ul class="hidden items-center gap-1 sm:flex">
+            {% for num in page_range %}
+              {% if num == paginator.ELLIPSIS %}
+              <li><span class="px-2 text-sm text-gray-400">{{ num }}</span></li>
+              {% elif num == page_obj.number %}
+              <li><span aria-current="page" class="grid h-9 min-w-9 place-items-center rounded-lg bg-blue-600 px-3 text-sm font-semibold text-white">{{ num }}</span></li>
+              {% else %}
+              <li><a href="?page={{ num }}" class="grid h-9 min-w-9 place-items-center rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 hover:bg-gray-50">{{ num }}</a></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+
+          <span class="text-sm text-gray-500 sm:hidden">{{ page_obj.number }} / {{ paginator.num_pages }}</span>
+
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" rel="next" class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
+          {% else %}
+          <span class="rounded-lg border border-gray-100 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-300">Next</span>
+          {% endif %}
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <p class="text-center text-sm text-gray-500">No books in the catalog yet. <a href="/search/" class="text-blue-600 hover:underline">Search for one</a> to add it.</p>
+        {% endif %}
+
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}
