@@ -1,15 +1,46 @@
-<h1>Terms & Conditions</h1>
+{% extends "base.html" %}
+{% block title %}{{ terms.title|default:"Terms and Conditions" }}{% endblock %}
+{% block main %}
+<main class="grow">
+  <section class="relative">
+    <div class="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform" aria-hidden="true">
+      <div class="h-80 w-[600px] rounded-full bg-linear-to-tr from-blue-500 opacity-30 blur-[160px]"></div>
+    </div>
 
-<div>
-  {{ terms.content|linebreaks }}
-</div>
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <div class="py-12 md:py-30">
 
-<form method="post">
-  {% csrf_token %}
-  <label>
-    <input type="checkbox" required>
-    I accept the Terms & Conditions
-  </label>
+        <div class="pb-12 text-center">
+          <h1 class="text-4xl font-bold text-gray-900 md:text-5xl">
+            {{ terms.title|default:"Terms and Conditions" }}
+          </h1>
+          {% if terms %}
+          <p class="mt-4 text-sm text-gray-500">
+            Version {{ terms.version }} &middot; Last updated {{ terms.published_at|date:"j F Y" }}
+          </p>
+          {% endif %}
+        </div>
 
-  <button type="submit">Accept</button>
-</form>
+        <div class="mx-auto max-w-3xl">
+          <div class="rounded-2xl border border-gray-200 bg-white/90 px-6 py-8 shadow-lg shadow-black/[0.03] backdrop-blur-xs sm:px-10 sm:py-10">
+            {% if terms %}
+            <div class="prose prose-gray max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-blue-500 hover:prose-a:underline">
+              {{ terms.content|safe }}
+            </div>
+            {% else %}
+            <p class="text-center text-gray-500">
+              Our Terms and Conditions are not available at the moment. Please check back soon.
+            </p>
+            {% endif %}
+          </div>
+
+          <div class="mt-6 text-center text-sm text-gray-500">
+            <a href="/" class="font-medium text-blue-500 hover:underline">Back to home</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

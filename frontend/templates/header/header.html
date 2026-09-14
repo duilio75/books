@@ -8,7 +8,9 @@
         <span class="brand-mark">TB</span>
         <span class="brand-name">Traveling<span class="text-blue-700">Books</span></span>
       </a>
-      {% render_menu "main" %}
+      <nav class="hidden lg:flex lg:flex-1 lg:items-center" aria-label="Main">
+           {% render_menu "main" %}
+      </nav>
       <!-- ============ Right cluster ============ -->
       <div class="ml-auto flex items-center gap-2">
 
@@ -49,41 +51,10 @@
 
     <!-- ============ Mobile panel ============ -->
     <div id="mobile-menu" hidden class="mt-2 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-black/[0.07] lg:hidden">
-      <nav aria-label="Mobile" class="p-2">
-        <ul class="flex flex-col gap-0.5 text-sm font-medium">
-          <li><a href="/" aria-current="page" class="block rounded-lg bg-blue-50 px-3 py-2.5 text-blue-700">Home</a></li>
-
-          <li>
-            <button type="button" class="sub-toggle flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50" aria-expanded="false">
-              Books
-              <svg class="chev h-3 w-3 fill-gray-400 transition-transform" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8.5 1.5 4h9L6 8.5Z"/></svg>
-            </button>
-            <ul hidden class="sub-list mt-0.5 ml-3 flex flex-col gap-0.5 border-l border-gray-200 pl-3 font-normal">
-              <li><a href="/books/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Browse the catalog</a></li>
-              <li><a href="/books/register/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Register a book</a></li>
-              <li><a href="/books/release/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Release into the wild</a></li>
-              <li><a href="/map/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Book map</a></li>
-            </ul>
-          </li>
-
-          <li><a href="/journeys/" class="block rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50">Journeys</a></li>
-
-          <li>
-            <button type="button" class="sub-toggle flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50" aria-expanded="false">
-              Community
-              <svg class="chev h-3 w-3 fill-gray-400 transition-transform" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 8.5 1.5 4h9L6 8.5Z"/></svg>
-            </button>
-            <ul hidden class="sub-list mt-0.5 ml-3 flex flex-col gap-0.5 border-l border-gray-200 pl-3 font-normal">
-              <li><a href="/members/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Members</a></li>
-              <li><a href="/forum/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Forum</a></li>
-              <li><a href="/events/" class="block rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50">Meet-ups</a></li>
-            </ul>
-          </li>
-
-          <li><a href="/about/" class="block rounded-lg px-3 py-2.5 text-gray-800 hover:bg-gray-50">About</a></li>
-        </ul>
-
-      
+      <!-- Same partial as the desktop nav, stacked: the shared <ul> is a
+           horizontal flex row, so override its direction here. -->
+      <nav aria-label="Mobile" class="p-2 [&_ul]:flex-col [&_ul]:items-stretch">
+        {% render_menu "main" %}
       </nav>
     </div>
   </div>

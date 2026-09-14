@@ -9,6 +9,7 @@ import $ from "jquery";
 import PasswordToggle from "../components/password-toggle";
 import MessageToast from "../components/message-toast";
 import BookSearch from "../components/search-book";
+import MobileMenu from "../components/mobile-menu";
 
 $(function () {
   window.console.log("jquery ready");
@@ -23,6 +24,9 @@ $(function () {
 
   const bookSearchForm = document.querySelector(BookSearch.selector());
   if (bookSearchForm) new BookSearch(bookSearchForm);
+
+  const menuToggle = document.querySelector(MobileMenu.selector());
+  if (menuToggle) new MobileMenu(menuToggle);
 
   const termsDialog = document.getElementById('terms-dialog');
   if (termsDialog) termsDialog.showModal();

@@ -34,12 +34,28 @@ def register_view(request):
         user.is_active = False
         user.save()
 
+        latest_terms = TermsVersion.objects.filter(is_active=True).first()
+        if latest_terms:
+            TermsAcceptance.objects.get_or_create(
+                user=user,
+                terms=latest_terms,
+                defaults={"ip_address": request.META.get("REMOTE_ADDR")},
+            )
+
         token_obj = EmailVerificationToken.objects.create(user=user)
         _send_verification_email(request, user, token_obj)
 
         return redirect("verify_email_sent")
 
     return render(request, "users/register.html", {"form": form})
+
+
+def terms_view(request):
+    """Public Terms & Conditions page, rendered from the active TermsVersion."""
+    terms = TermsVersion.objects.filter(
+        type=TermsVersion.Type.TERMS_OF_SERVICE, is_active=True
+    ).first()
+    return render(request, "users/terms.html", {"terms": terms})
 
 
 def verify_email_sent_view(request):
