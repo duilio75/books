@@ -26,15 +26,16 @@ class TermsVersionAdmin(admin.ModelAdmin):
 
 @admin.register(TermsAcceptance)
 class TermsAcceptanceAdmin(admin.ModelAdmin):
-    list_display = ("user", "terms", "accepted_at", "ip_address")
+    list_display = ("user", "terms", "version", "accepted_at", "ip_address")
     list_filter = ("terms", "accepted_at")
     search_fields = (
         "user__username",
         "user__email",
         "terms__version",
+        "version",
         "ip_address",
     )
-    readonly_fields = ("user", "terms", "accepted_at", "ip_address")
+    readonly_fields = ("user", "terms", "version", "accepted_at", "ip_address")
     ordering = ("-accepted_at",)
 
     def has_add_permission(self, request):

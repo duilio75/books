@@ -19,6 +19,14 @@ class RegisterForm(UserCreationForm):
             )
         },
     )
+    privacy_accepted = forms.BooleanField(
+        required=True,
+        initial=False,
+        label="I have read and accept the Privacy Policy.",
+        error_messages={
+            "required": "You must accept the Privacy Policy."
+        },
+    )
 
     class Meta:
         model = User

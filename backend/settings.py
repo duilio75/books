@@ -34,6 +34,16 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ("1", "true", "yes")
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
+# Legal documents a user must accept at registration, as TermsVersion.Type
+# values. Validated at startup by users.apps.check_required_terms_types.
+REQUIRED_TERMS_TYPES = [
+    t.strip()
+    for t in os.getenv(
+        "REQUIRED_TERMS_TYPES", "terms_of_service,privacy_policy"
+    ).split(",")
+    if t.strip()
+]
+
 
 CSRF_TRUSTED_ORIGINS = [
     f"https://{host.strip()}"
@@ -131,6 +141,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    # Must come after AuthenticationMiddleware: it reads request.user.
+    'users.middleware.TermsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'

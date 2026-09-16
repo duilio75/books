@@ -9,5 +9,6 @@ urlpatterns = [
     path("verify-email/sent", views.verify_email_sent_view, name="verify_email_sent"),
     path("verify-email/<uuid:token>/", views.verify_email_view, name="verify_email"),
     path("terms-and-conditions/", views.terms_view, name="terms"),
+    path("privacy-policy/", views.policy_view, name="policy"),
     path("terms/accept", views.accept_terms_view, name="accept_terms"),
 ]

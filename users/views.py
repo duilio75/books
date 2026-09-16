@@ -6,7 +6,12 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import RegisterForm, LoginForm
-from .models import EmailVerificationToken, TermsVersion, TermsAcceptance
+from .models import EmailVerificationToken, TermsVersion
+from .terms import (
+    active_required_documents,
+    outstanding_documents,
+    record_acceptance,
+)
 
 
 def _send_verification_email(request, user, token_obj):
@@ -34,13 +39,9 @@ def register_view(request):
         user.is_active = False
         user.save()
 
-        latest_terms = TermsVersion.objects.filter(is_active=True).first()
-        if latest_terms:
-            TermsAcceptance.objects.get_or_create(
-                user=user,
-                terms=latest_terms,
-                defaults={"ip_address": request.META.get("REMOTE_ADDR")},
-            )
+        ip_address = request.META.get("REMOTE_ADDR")
+        for document in active_required_documents():
+            record_acceptance(user, document, ip_address)
 
         token_obj = EmailVerificationToken.objects.create(user=user)
         _send_verification_email(request, user, token_obj)
@@ -56,6 +57,18 @@ def terms_view(request):
         type=TermsVersion.Type.TERMS_OF_SERVICE, is_active=True
     ).first()
     return render(request, "users/terms.html", {"terms": terms})
+
+
+
+def policy_view(request):
+    """Privacy Policy page, rendered from the active PrivacyPolicy."""
+    terms = TermsVersion.objects.filter(
+        type=TermsVersion.Type.PRIVACY_POLICY, is_active=True
+    ).first()
+    return render(request, "users/policy.html", {"terms": terms})
+
+
+
 
 
 def verify_email_sent_view(request):
@@ -94,13 +107,10 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
-    latest = TermsVersion.objects.filter(is_active=True).first()
-    terms_accepted = latest is not None and TermsAcceptance.objects.filter(
-        user=request.user, terms=latest
-    ).exists()
+    outstanding = outstanding_documents(request.user)
     return render(request, "users/dashboard.html", {
-        "terms_accepted": terms_accepted,
-        "terms": latest,
+        "terms_accepted": not outstanding,
+        "outstanding_terms": outstanding,
     })
 
 
@@ -109,12 +119,17 @@ def accept_terms_view(request):
     if request.method != "POST":
         return redirect("dashboard")
 
-    latest = TermsVersion.objects.filter(is_active=True).first()
-    if latest:
-        TermsAcceptance.objects.get_or_create(
-            user=request.user,
-            terms=latest,
-            defaults={"ip_address": request.META.get("REMOTE_ADDR")},
+    outstanding = outstanding_documents(request.user)
+    submitted = set(request.POST.getlist("accepted_types"))
+    if any(document.type not in submitted for document in outstanding):
+        messages.error(
+            request, "Please accept every document listed in order to continue."
         )
+        return redirect("dashboard")
+
+    if outstanding:
+        ip_address = request.META.get("REMOTE_ADDR")
+        for document in outstanding:
+            record_acceptance(request.user, document, ip_address)
         messages.success(request, "Thanks for accepting our conditions!")
     return redirect("dashboard")

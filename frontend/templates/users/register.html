@@ -144,7 +144,7 @@
                 {% endif %}
               </div>
 
-              <div class="mb-6">
+              <div class="mb-4">
                 <label class="flex items-start gap-3" for="{{ form.terms_accepted.id_for_label }}">
                   <input
                     id="{{ form.terms_accepted.id_for_label }}"
@@ -156,11 +156,31 @@
                   />
                   <span class="text-sm text-gray-700">
                     I confirm that I am at least 18 years old and that I have read and accept the
-                    <a href="/terms-and-conditions/" target="_blank" rel="noopener" class="font-medium text-blue-500 hover:underline">Terms and Conditions</a>.
+                    <a href="{% url 'terms' %}" target="_blank" rel="noopener" class="font-medium text-blue-500 hover:underline">Terms and Conditions</a>.
                   </span>
                 </label>
                 {% if form.terms_accepted.errors %}
                 <p class="mt-1 text-xs text-red-500">{{ form.terms_accepted.errors|join:", " }}</p>
+                {% endif %}
+              </div>
+
+              <div class="mb-6">
+                <label class="flex items-start gap-3" for="{{ form.privacy_accepted.id_for_label }}">
+                  <input
+                    id="{{ form.privacy_accepted.id_for_label }}"
+                    name="{{ form.privacy_accepted.html_name }}"
+                    type="checkbox"
+                    required
+                    {% if form.privacy_accepted.value %}checked{% endif %}
+                    class="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500 {% if form.privacy_accepted.errors %}border-red-400{% endif %}"
+                  />
+                  <span class="text-sm text-gray-700">
+                    I have read and accept the
+                    <a href="{% url 'policy' %}" target="_blank" rel="noopener" class="font-medium text-blue-500 hover:underline">Privacy Policy</a>.
+                  </span>
+                </label>
+                {% if form.privacy_accepted.errors %}
+                <p class="mt-1 text-xs text-red-500">{{ form.privacy_accepted.errors|join:", " }}</p>
                 {% endif %}
               </div>
 
