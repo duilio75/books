@@ -5,14 +5,17 @@ body {
 }
 
 :root {
-  --primary: #445cd2;
-  --secondary: #ffc805;
-  --dark: #000000;
-  --light: #ffeeb3;
-  --border: #f00078;
-  --bold-color: #212736;
-  --content-bg: #fbf1e2;
-  --text-color: #383549;
+  /* The palette itself now lives in the @theme block of ../index.css, where
+     Tailwind turns it into utilities. These aliases keep the unprefixed names
+     usable in hand-written CSS. */
+  --primary: var(--color-primary);
+  --secondary: var(--color-secondary);
+  --dark: var(--color-dark);
+  --light: var(--color-light);
+  --border: var(--color-border);
+  --bold-color: var(--color-bold-color);
+  --content-bg: var(--color-content-bg);
+  --text-color: var(--color-text-color);
   --black-50: rgba(4, 4, 4, 0.5);
   --black-40: rgba(4, 4, 4, 0.4);
   --black-30: rgba(4, 4, 4, 0.3);
@@ -21,11 +24,6 @@ body {
   --form-bg: #f9fafb;
   --form-border: #d1d5db;
   --verde: #199e54d4;
-  --linea: #ffc108f5;
-  --block-bg: #ffeeb3;
-  --block-bg-shadow: #ffc80594;
-  --primary-20: rgb(235, 5, 120, 0.2);
-  --primary-10: rgb(235, 5, 120, 0.1);
   --body-font: sans-serif;
   --heading-font: "Amsi Pro Condensed Bold", "Titillium Web", sans-serif;
 }

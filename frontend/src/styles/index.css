@@ -20,6 +20,18 @@
   --font-inter: Inter, sans-serif;
   --font-mono: Roboto Mono, monospace;
 
+  /* Brand palette. Namespaced as --color-* so Tailwind generates the matching
+     utilities (bg-primary, text-text-color, border-border, ...); the names
+     after the prefix are the ones from abstract/_css-vars.css. */
+  --color-primary: #445cd2;
+  --color-secondary: #ffc805;
+  --color-dark: #000000;
+  --color-light: #ffeeb3;
+  --color-border: #f00078;
+  --color-bold-color: #212736;
+  --color-content-bg: #fbf1e2;
+  --color-text-color: #383549;
+
   /* Dark band behind the featured-books shelf. Deeper than blue-700/600 so
      the gray-900/80 cards sitting on it read as objects, not smudges. */
   --color-shelf-ink: #0a1730;

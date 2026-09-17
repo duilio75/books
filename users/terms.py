@@ -6,6 +6,7 @@ validated at startup by ``users.apps.check_required_terms_types``.
 """
 
 from django.conf import settings
+from django.utils import timezone
 
 from .models import TermsVersion, TermsAcceptance
 
@@ -46,9 +47,20 @@ def outstanding_documents(user):
 
 
 def record_acceptance(user, document, ip_address=None):
-    """Store `user`'s acceptance of `document`, snapshotting its version."""
-    return TermsAcceptance.objects.get_or_create(
+    """Store `user`'s acceptance of `document`, snapshotting its version.
+
+    Updates rather than skips an existing row: a TermsVersion edited in place
+    keeps its primary key, so the (user, terms) acceptance already exists while
+    still carrying the superseded version string. Leaving it untouched would
+    keep the document outstanding forever and re-show the acceptance dialog on
+    every page load.
+    """
+    return TermsAcceptance.objects.update_or_create(
         user=user,
         terms=document,
-        defaults={"version": document.version, "ip_address": ip_address},
+        defaults={
+            "version": document.version,
+            "ip_address": ip_address,
+            "accepted_at": timezone.now(),
+        },
     )

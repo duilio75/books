@@ -80,3 +80,20 @@ class TermsGateTests(TestCase):
         self.pp_v1.save()
         self.assertEqual([d.type for d in outstanding_documents(self.user)],
                          ["terms_of_service"])
+
+    def test_in_place_version_bump_can_be_re_accepted(self):
+        """A TermsVersion edited in the admin keeps its pk, so the acceptance
+        row already exists; re-accepting has to refresh its version string."""
+        both = ["terms_of_service", "privacy_policy"]
+        self.client.post(reverse("accept_terms"), {"accepted_types": both})
+        self.assertEqual(outstanding_documents(self.user), [])
+
+        self.tos_v1.version = "12"
+        self.tos_v1.save()
+        self.assertEqual([d.version for d in outstanding_documents(self.user)], ["12"])
+
+        self.client.post(reverse("accept_terms"), {"accepted_types": both})
+
+        acceptance = TermsAcceptance.objects.get(user=self.user, terms=self.tos_v1)
+        self.assertEqual(acceptance.version, "12")
+        self.assertEqual(outstanding_documents(self.user), [])
