@@ -121,6 +121,9 @@ def accept_terms_view(request):
 
     outstanding = outstanding_documents(request.user)
     submitted = set(request.POST.getlist("accepted_types"))
+
+    s = ''
+
     if any(document.type not in submitted for document in outstanding):
         messages.error(
             request, "Please accept every document listed in order to continue."
