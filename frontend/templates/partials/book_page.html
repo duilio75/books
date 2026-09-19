@@ -23,6 +23,14 @@
           <div>
             <h1 class="text-4xl font-bold text-gray-900 md:text-5xl">{{ book.title }}</h1>
             <p class="mt-4 text-lg text-gray-600">{{ book.author }}</p>
+            {# data-book is ReviewDialog's trigger; description stays empty, the book already exists. #}
+            <button
+              type="button"
+              data-book='{"volumeId":"{{ book.volume|escapejs }}","isbn":"","title":"{{ book.title|escapejs }}","authors":"{{ book.author|escapejs }}","coverUrl":"{{ book.cover_url|escapejs }}","description":""}'
+              class="btn mt-6 bg-linear-to-t from-blue-600 to-blue-500 bg-[length:100%_100%] bg-[bottom] text-white shadow-sm hover:bg-[length:100%_150%]"
+            >
+              Leave a Review
+            </button>
           </div>
         </div>
 
@@ -56,5 +64,7 @@
       </div>
     </div>
   </section>
+
+  {% include "partials/review_dialog.html" %}
 </main>
 {% endblock %}

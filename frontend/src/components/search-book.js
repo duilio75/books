@@ -1,3 +1,5 @@
+// Searches the books API and renders the result cards. Reviewing is handled by
+// ReviewDialog, which picks up the [data-book] buttons rendered here.
 class BookSearch {
   static selector() {
     return "#book-search-form";
@@ -7,22 +9,8 @@ class BookSearch {
     this.form = form;
     this.input = document.getElementById("book-search-input");
     this.resultsEl = document.getElementById("book-results");
-    this.dialog = document.getElementById("review-dialog");
-    this.reviewForm = document.getElementById("rdlg-form");
-    this.starButtons = document.querySelectorAll("#star-row button");
-    this.selectedRating = 0;
 
     this.form.addEventListener("submit", (e) => this.search(e));
-    this.resultsEl.addEventListener("click", (e) => this.onResultsClick(e));
-    this.reviewForm.addEventListener("submit", (e) => this.submitReview(e));
-
-    this.starButtons.forEach((btn, i) => {
-      btn.addEventListener("click", () => this.setStars(i + 1));
-    });
-
-    document.querySelectorAll("[data-dialog-close]").forEach((btn) => {
-      btn.addEventListener("click", () => this.dialog.close());
-    });
 
     // /search/?q=... renders the input pre-filled: run that search right away.
     if (this.input.value.trim()) this.runSearch();
@@ -63,10 +51,11 @@ class BookSearch {
     const authors = info.authors ? info.authors.join(", ") : "";
     const inDb = item._in_db;
     const description = info.description || "";
-    //console.log(info);
     const volumeId = item.id || "";
     const isbn = (info.industryIdentifiers || []).map((x) => x.identifier).join(",");
     const coverUrl = thumb;
+    // data-book is ReviewDialog's trigger: the payload it carries is what
+    // ReviewDialog.open() expects.
     const bookAttr = JSON.stringify({ volumeId, isbn, title, authors, coverUrl, description }).replace(/"/g, "&quot;");
     const reviewBtn = '<button type="button" data-book="' + bookAttr + '" class="flex-1 bg-blue-100 py-2 text-center text-xs font-semibold text-gray-600 hover:bg-blue-200">Leave a Review</button>';
     const btn = inDb
@@ -88,84 +77,6 @@ class BookSearch {
       + "</span>"
       + btn
       + "</span>";
-  }
-
-  onResultsClick(e) {
-    const btn = e.target.closest("[data-book]");
-    if (!btn) return;
-    this.openReviewDialog(JSON.parse(btn.dataset.book));
-  }
-
-  openReviewDialog(book) {
-    document.getElementById("rdlg-title").textContent = book.title;
-    document.getElementById("rdlg-author").textContent = book.authors || "";
-    document.getElementById("rdlg-cover").src = book.coverUrl || "";
-    document.getElementById("rdlg-cover").style.display = book.coverUrl ? "" : "none";
-    document.getElementById("rdlg-volume-id").value = book.volumeId;
-    document.getElementById("rdlg-isbn").value = book.isbn;
-    document.getElementById("rdlg-book-title").value = book.title;
-    document.getElementById("rdlg-book-author").value = book.authors || "";
-    document.getElementById("rdlg-book-description").value = book.description || "";
-    document.getElementById("rdlg-book-cover").value = book.coverUrl || "";
-    document.getElementById("rdlg-rating").value = "";
-    document.getElementById("rdlg-text").value = "";
-    document.getElementById("rdlg-error").textContent = "";
-    document.getElementById("rdlg-success").classList.add("hidden");
-    document.getElementById("rdlg-form").classList.remove("hidden");
-    this.setStars(0);
-    this.dialog.showModal();
-  }
-
-  setStars(n) {
-    this.selectedRating = n;
-    document.getElementById("rdlg-rating").value = n;
-    this.starButtons.forEach((btn, i) => {
-      btn.textContent = i < n ? "★" : "☆";
-      btn.classList.toggle("text-yellow-400", i < n);
-      btn.classList.toggle("text-gray-300", i >= n);
-    });
-  }
-
-  async submitReview(e) {
-    e.preventDefault();
-    const rating = parseInt(document.getElementById("rdlg-rating").value, 10);
-    const reviewText = document.getElementById("rdlg-text").value.trim();
-    const errEl = document.getElementById("rdlg-error");
-    if (!rating) { errEl.textContent = "Please select a rating."; return; }
-    if (!reviewText) { errEl.textContent = "Please write a review."; return; }
-    errEl.textContent = "";
-    const payload = {
-      volume_id: document.getElementById("rdlg-volume-id").value,
-      isbn: document.getElementById("rdlg-isbn").value,
-      title: document.getElementById("rdlg-book-title").value,
-      author: document.getElementById("rdlg-book-author").value,
-      cover_url: document.getElementById("rdlg-book-cover").value,
-      description: document.getElementById("rdlg-book-description").value,
-      rating: rating,
-      review_text: reviewText,
-    };
-    try {
-      const res = await fetch("/api/books/reviews/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-CSRFToken": this.getCookie("csrftoken") },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        errEl.textContent = JSON.stringify(err);
-        return;
-      }
-      document.getElementById("rdlg-form").classList.add("hidden");
-      document.getElementById("rdlg-success").classList.remove("hidden");
-    } catch (throwError) {
-      console.error(throwError);
-      errEl.textContent = "Network error. Please try again.";
-    }
-  }
-
-  getCookie(name) {
-    const m = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
-    return m ? m.pop() : "";
   }
 }
 

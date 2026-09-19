@@ -10,6 +10,7 @@ import PasswordToggle from "../components/password-toggle";
 import MessageToast from "../components/message-toast";
 import BookSearch from "../components/search-book";
 import MobileMenu from "../components/mobile-menu";
+import ReviewDialog from "../components/review-dialog";
 
 $(function () {
   window.console.log("jquery ready");
@@ -24,6 +25,9 @@ $(function () {
 
   const bookSearchForm = document.querySelector(BookSearch.selector());
   if (bookSearchForm) new BookSearch(bookSearchForm);
+
+  const reviewDialog = document.querySelector(ReviewDialog.selector());
+  if (reviewDialog) new ReviewDialog(reviewDialog);
 
   const menuToggle = document.querySelector(MobileMenu.selector());
   if (menuToggle) new MobileMenu(menuToggle);
