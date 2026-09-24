@@ -25,7 +25,7 @@
           <div class="rounded-2xl border border-gray-200 bg-white/90 px-6 py-8 shadow-lg shadow-black/[0.03] backdrop-blur-xs sm:px-10 sm:py-10">
             {% if terms %}
             <div class="prose prose-gray max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-blue-500 hover:prose-a:underline">
-              {{ terms.content|safe }}
+              {{ terms.rendered_content|safe }}
             </div>
             {% else %}
             <p class="text-center text-gray-500">

@@ -34,6 +34,11 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ("1", "true", "yes")
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
+LEGAL_PLACEHOLDERS = {
+    key: os.getenv(key, "")
+    for key in ("WEBSITE_NAME", "WEBSITE_URL", "CONTACT_EMAIL", "PEC_ADDRESS", "SUPPORT_EMAIL", "LEGAL_OPERATOR")
+}
+
 # Legal documents a user must accept at registration, as TermsVersion.Type
 # values. Validated at startup by users.apps.check_required_terms_types.
 REQUIRED_TERMS_TYPES = [

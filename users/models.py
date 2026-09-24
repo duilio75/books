@@ -1,8 +1,13 @@
 import uuid
+import re
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from tinymce.models import HTMLField
+from django.utils.html import escape
+from django.utils.functional import cached_property
 
+_PLACEHOLDER_RE = re.compile(r"\[s*([A-Z_]+)\s*\]")
 
 class EmailVerificationToken(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -26,6 +31,17 @@ class TermsVersion(models.Model):
     content = HTMLField()
     is_active = models.BooleanField(default=False)
     published_at = models.DateTimeField(auto_now_add=True)
+
+    @cached_property
+    def rendered_content(self):
+          values = settings.LEGAL_PLACEHOLDERS
+          # Unknown tokens are left as they are, so a missing value shows up on the page.
+          return _PLACEHOLDER_RE.sub(
+              lambda m: escape(values[m[1]]) if values.get(m[1]) else m[0],
+              self.content,
+          )
+
+
 
     def __str__(self):
         return f"{self.get_type_display()} v{self.version}"

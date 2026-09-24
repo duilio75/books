@@ -56,6 +56,7 @@ def terms_view(request):
     terms = TermsVersion.objects.filter(
         type=TermsVersion.Type.TERMS_OF_SERVICE, is_active=True
     ).first()
+
     return render(request, "users/terms.html", {"terms": terms})
 
 
