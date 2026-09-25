@@ -11,6 +11,9 @@
     {% block meta_url %}{% endblock meta_url %}
     {% block meta_descri %}{% endblock meta_descri %}
     {% block meta_img %}{% endblock meta_img %}
+    {% if cookie_consent.granted.analytics %}
+    <meta name="Generator" content="Duilio Devigus 11" />
+    {% endif %}
     <link rel="icon" type="image/x-icon" href="{% static 'vendors/images/favicon.ico' %}">
     {% stylesheet_pack 'app' %}
 </head>
