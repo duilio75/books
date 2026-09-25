@@ -56,3 +56,20 @@ class TermsAcceptance(models.Model):
 
     class Meta:
         unique_together = ("user", "terms")
+
+class CookieConsent(models.Model):
+    """One visitor's cookie choice, kept as proof of consent (GDPR art. 7(1)).
+
+    A new row is written on every choice and never updated. ``consent_id`` is
+    the identifier stored in the visitor's consent cookie, so an anonymous
+    choice can still be traced back; no IP address is stored.
+    """
+
+    consent_id = models.UUIDField(db_index=True)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    version = models.CharField(max_length=20)
+    granted = models.JSONField(default=list, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Cookie consent {self.consent_id} v{self.version}"

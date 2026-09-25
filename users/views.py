@@ -1,12 +1,19 @@
+import uuid
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
 
 from .forms import RegisterForm, LoginForm
-from .models import EmailVerificationToken, TermsVersion
+from .cookies import category_keys, read_consent, write_consent
+from .models import CookieConsent, EmailVerificationToken, TermsVersion
 from .terms import (
     active_required_documents,
     outstanding_documents,
@@ -68,6 +75,53 @@ def policy_view(request):
     ).first()
     return render(request, "users/policy.html", {"terms": terms})
 
+
+
+
+def cookie_policy_view(request):
+    """Cookie Policy page, with the form to change cookie preferences."""
+    terms = TermsVersion.objects.filter(
+        type=TermsVersion.Type.COOKIE_POLICY, is_active=True
+    ).first()
+    return render(request, "users/cookie_policy.html", {"terms": terms})
+
+
+@require_POST
+def cookie_consent_view(request):
+    """Store the visitor's cookie choice from the banner or preferences form.
+
+    Works as a plain form post (redirects back to ``next``) and, for the
+    banner's JS, as a fetch returning JSON.
+    """
+    action = request.POST.get("action")
+    if action == "accept_all":
+        granted = category_keys()
+    elif action == "reject_all":
+        granted = []
+    else:
+        chosen = set(request.POST.getlist("categories"))
+        granted = [key for key in category_keys() if key in chosen]
+
+    previous = read_consent(request)
+    consent_id = previous["id"] if previous else uuid.uuid4()
+    CookieConsent.objects.create(
+        consent_id=consent_id,
+        user=request.user if request.user.is_authenticated else None,
+        version=settings.COOKIE_CONSENT_VERSION,
+        granted=granted,
+    )
+
+    if "application/json" in request.headers.get("Accept", ""):
+        response = JsonResponse({"granted": granted})
+    else:
+        next_url = request.POST.get("next", "")
+        if not url_has_allowed_host_and_scheme(
+            next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+        ):
+            next_url = "/"
+        response = redirect(next_url)
+    write_consent(response, consent_id, granted)
+    return response
 
 
 

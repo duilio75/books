@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TermsVersion, TermsAcceptance
+from .models import CookieConsent, TermsVersion, TermsAcceptance
 
 # Register your models here.
 
@@ -37,6 +37,21 @@ class TermsAcceptanceAdmin(admin.ModelAdmin):
     )
     readonly_fields = ("user", "terms", "version", "accepted_at", "ip_address")
     ordering = ("-accepted_at",)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(CookieConsent)
+class CookieConsentAdmin(admin.ModelAdmin):
+    list_display = ("consent_id", "user", "version", "granted", "created_at")
+    list_filter = ("version", "created_at")
+    search_fields = ("consent_id", "user__username", "user__email")
+    readonly_fields = ("consent_id", "user", "version", "granted", "created_at")
+    ordering = ("-created_at",)
 
     def has_add_permission(self, request):
         return False

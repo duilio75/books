@@ -15,7 +15,10 @@ class TermsMiddleware:
 
     # Reached while the user still has documents outstanding: the acceptance
     # dialog itself, the read-only document pages, and the way back out.
-    EXEMPT_URL_NAMES = ("dashboard", "accept_terms", "terms", "policy", "logout")
+    EXEMPT_URL_NAMES = (
+        "dashboard", "accept_terms", "terms", "policy", "logout",
+        "cookie_policy", "cookie_consent",
+    )
 
     def __init__(self, get_response):
         self.get_response = get_response

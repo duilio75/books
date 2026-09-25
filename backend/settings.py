@@ -50,6 +50,30 @@ REQUIRED_TERMS_TYPES = [
 ]
 
 
+# Cookie consent banner (GDPR + ePrivacy Directive art. 5(3)). Strictly
+# necessary cookies (session, CSRF, the consent cookie itself) need no consent;
+# every other category below is off until the visitor opts in. Bump
+# COOKIE_CONSENT_VERSION when the categories or the cookie policy change, so
+# every visitor is asked again.
+COOKIE_CONSENT_NAME = "cookie_consent"
+COOKIE_CONSENT_VERSION = os.getenv("COOKIE_CONSENT_VERSION", "1")
+# 6 months: the Italian Garante's guidance on how long a choice may be kept
+# before asking again.
+COOKIE_CONSENT_MAX_AGE = 60 * 60 * 24 * 180
+COOKIE_CONSENT_CATEGORIES = [
+    {
+        "key": "analytics",
+        "label": "Analytics",
+        "description": "Help us understand how visitors use the site, so we can improve it.",
+    },
+    {
+        "key": "marketing",
+        "label": "Marketing",
+        "description": "Used by third parties to show you personalised content and advertising.",
+    },
+]
+
+
 CSRF_TRUSTED_ORIGINS = [
     f"https://{host.strip()}"
     for host in ALLOWED_HOSTS
@@ -162,6 +186,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'users.cookies.cookie_consent',
             ],
         },
     },

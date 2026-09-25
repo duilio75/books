@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ terms.title|default:"Cookie Policy" }}{% endblock %}
+{% block main %}
+<main class="grow">
+  <section class="relative">
+    <div class="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform" aria-hidden="true">
+      <div class="h-80 w-[600px] rounded-full bg-linear-to-tr from-blue-500 opacity-30 blur-[160px]"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <div class="py-12 md:py-30">
+
+        <div class="pb-12 text-center">
+          <h1 class="text-4xl font-bold text-gray-900 md:text-5xl">
+            {{ terms.title|default:"Cookie Policy" }}
+          </h1>
+          {% if terms %}
+          <p class="mt-4 text-sm text-gray-500">
+            Version {{ terms.version }} &middot; Last updated {{ terms.published_at|date:"j F Y" }}
+          </p>
+          {% endif %}
+        </div>
+
+        <div class="mx-auto max-w-3xl">
+          <div class="rounded-2xl border border-gray-200 bg-white/90 px-6 py-8 shadow-lg shadow-black/[0.03] backdrop-blur-xs sm:px-10 sm:py-10">
+            {% if terms %}
+            <div class="prose prose-gray max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-blue-500 hover:prose-a:underline">
+              {{ terms.rendered_content|safe }}
+            </div>
+            {% else %}
+            <p class="text-center text-gray-500">
+              Our Cookie Policy is not available at the moment. Please check back soon.
+            </p>
+            {% endif %}
+          </div>
+
+          <div id="cookie-settings" class="mt-8 scroll-mt-24 rounded-2xl border border-gray-200 bg-white/90 px-6 py-8 shadow-lg shadow-black/[0.03] backdrop-blur-xs sm:px-10">
+            <h2 class="text-xl font-semibold text-gray-900">Your cookie settings</h2>
+            <p class="mt-2 text-sm text-gray-600">
+              {% if cookie_consent.given %}
+                You can change or withdraw your consent at any time. Withdrawing consent does not affect what was done before.
+              {% else %}
+                You have not made a choice yet. Optional cookies stay off until you allow them.
+              {% endif %}
+            </p>
+            {% include "partials/cookie_consent_form.html" with prefix="page" open=True %}
+          </div>
+
+          <div class="mt-6 text-center text-sm text-gray-500">
+            <a href="/" class="font-medium text-blue-500 hover:underline">Back to home</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

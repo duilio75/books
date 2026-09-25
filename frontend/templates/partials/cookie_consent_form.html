@@ -1,0 +1,57 @@
+{% comment %}
+  Cookie choice form, shared by the banner and the Cookie Policy page.
+  Works without JS (posts and redirects back); cookie-consent.js submits it
+  with fetch instead. Pass `prefix` so two copies on a page keep unique ids.
+  "Accept all" and "Reject all" are deliberately styled the same: rejecting
+  must be as easy as accepting.
+{% endcomment %}
+<form method="post" action="{% url 'cookie_consent' %}" data-cookie-consent-form>
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+  <details class="group mt-4" data-cookie-details {% if open %}open{% endif %}>
+    <summary class="cursor-pointer list-none text-sm font-medium text-primary hover:underline [&::-webkit-details-marker]:hidden">
+      <span class="group-open:hidden">Customize preferences</span>
+      <span class="hidden group-open:inline">Hide preferences</span>
+    </summary>
+
+    <fieldset class="mt-3 space-y-3">
+      <legend class="sr-only">Cookie categories</legend>
+      <div class="flex items-start gap-3 rounded-xl bg-gray-50 p-3">
+        <input id="{{ prefix }}-cookie-necessary" type="checkbox" checked disabled
+               class="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary">
+        <label for="{{ prefix }}-cookie-necessary" class="text-sm">
+          <span class="font-semibold text-gray-900">Strictly necessary</span>
+          <span class="text-gray-500">(always active)</span>
+          <span class="block text-gray-600">Required for the site to work: sign-in session, security against forged requests, and remembering this choice.</span>
+        </label>
+      </div>
+      {% for category in cookie_consent.categories %}
+      <div class="flex items-start gap-3 rounded-xl bg-gray-50 p-3">
+        <input id="{{ prefix }}-cookie-{{ category.key }}" type="checkbox" name="categories" value="{{ category.key }}"
+               {% if category.granted %}checked{% endif %}
+               class="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary">
+        <label for="{{ prefix }}-cookie-{{ category.key }}" class="text-sm">
+          <span class="font-semibold text-gray-900">{{ category.label }}</span>
+          <span class="block text-gray-600">{{ category.description }}</span>
+        </label>
+      </div>
+      {% endfor %}
+      <button type="submit" name="action" value="save"
+              class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 transition hover:bg-gray-50 sm:w-auto">
+        Save my choices
+      </button>
+    </fieldset>
+  </details>
+
+  <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
+    <button type="submit" name="action" value="reject_all"
+            class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/85">
+      Reject all
+    </button>
+    <button type="submit" name="action" value="accept_all"
+            class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/85">
+      Accept all
+    </button>
+  </div>
+</form>

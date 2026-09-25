@@ -11,6 +11,7 @@ import MessageToast from "../components/message-toast";
 import BookSearch from "../components/search-book";
 import MobileMenu from "../components/mobile-menu";
 import ReviewDialog from "../components/review-dialog";
+import CookieConsent from "../components/cookie-consent";
 
 $(function () {
   window.console.log("jquery ready");
@@ -28,6 +29,9 @@ $(function () {
 
   const reviewDialog = document.querySelector(ReviewDialog.selector());
   if (reviewDialog) new ReviewDialog(reviewDialog);
+
+  const cookieBanner = document.querySelector(CookieConsent.selector());
+  if (cookieBanner) new CookieConsent(cookieBanner);
 
   const menuToggle = document.querySelector(MobileMenu.selector());
   if (menuToggle) new MobileMenu(menuToggle);

@@ -1,6 +1,6 @@
 {% load static %}
 <footer>
-  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+  <div class="relative z-20 mx-auto max-w-6xl px-4 sm:px-6">
     <div class="grid gap-10 py-8 sm:grid-cols-12 md:py-12 border-t [border-image:linear-gradient(to_right,transparent,var(--color-slate-200),transparent)1]">
       <div class="space-y-2 sm:col-span-12 lg:col-span-4">
         <div>
@@ -26,6 +26,13 @@
           </li>
           <li class="pt-0.5">
              <a class="text-sm text-primary transition hover:text-primary/80" href="{% url 'policy' %}">Privacy Policy</a>
+          </li>
+          <li class="pt-0.5">
+            <a class="text-sm text-primary transition hover:text-primary/80" href="{% url 'cookie_policy' %}">Cookie Policy</a>
+          </li>
+          <li class="pt-0.5">
+            <a class="text-sm text-primary transition hover:text-primary/80" href="{% url 'cookie_policy' %}#cookie-settings"
+              data-cookie-settings>Cookie settings</a>
           </li>
         </ul>
       </div>

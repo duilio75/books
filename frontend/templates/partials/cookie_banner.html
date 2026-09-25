@@ -1,0 +1,32 @@
+{% comment %}
+  Cookie banner (GDPR + ePrivacy Directive). Shown until the visitor makes a
+  choice for the current COOKIE_CONSENT_VERSION; reopened from the footer's
+  "Cookie settings" link. It does not block the page (no cookie wall), and
+  closing it with the X counts as rejecting every optional category.
+{% endcomment %}
+{{ cookie_consent.granted_list|json_script:"cookie-consent-granted" }}
+<div id="cookie-banner" role="region" aria-label="Cookie consent" data-cookie-banner
+     class="fixed inset-x-0 bottom-0 z-40 p-4 sm:p-6" {% if cookie_consent.given %}hidden{% endif %}>
+  <div class="relative mx-auto max-w-3xl rounded-2xl bg-white px-5 py-5 shadow-2xl ring-1 ring-black/10 sm:px-6">
+    <form method="post" action="{% url 'cookie_consent' %}" data-cookie-consent-form class="absolute right-3 top-3">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+      <button type="submit" name="action" value="reject_all" aria-label="Close and reject optional cookies"
+              class="rounded-lg p-1 text-gray-400 hover:text-gray-600">
+        <svg class="h-4 w-4 fill-current" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.28 3.22a.75.75 0 0 0-1.06 1.06L6.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06L8 9.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L9.06 8l3.72-3.72a.75.75 0 0 0-1.06-1.06L8 6.94 4.28 3.22Z"/></svg>
+      </button>
+    </form>
+
+    <h2 class="pr-8 text-base font-semibold text-gray-900">We value your privacy</h2>
+    <p class="mt-2 text-sm text-gray-600">
+      We use strictly necessary cookies to make this site work. With your consent we would also use
+      optional cookies for the purposes listed under “Customize preferences”. You can accept all,
+      reject all, or choose, and change your mind at any time from “Cookie settings” at the bottom of every page.
+      Closing this banner keeps only the necessary cookies.
+      Read our <a href="{% url 'cookie_policy' %}" class="font-medium text-primary hover:underline">Cookie Policy</a>
+      and <a href="{% url 'policy' %}" class="font-medium text-primary hover:underline">Privacy Policy</a>.
+    </p>
+
+    {% include "partials/cookie_consent_form.html" with prefix="banner" %}
+  </div>
+</div>
