@@ -36,7 +36,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 LEGAL_PLACEHOLDERS = {
     key: os.getenv(key, "")
-    for key in ("WEBSITE_NAME", "WEBSITE_URL", "CONTACT_EMAIL", "PEC_ADDRESS", "SUPPORT_EMAIL", "LEGAL_OPERATOR")
+    for key in ("WEBSITE_NAME", "WEBSITE_URL", "CONTACT_EMAIL", "PEC_ADDRESS", "SUPPORT_EMAIL", "LEGAL_OPERATOR", "REPORTING_URL")
 }
 
 # Legal documents a user must accept at registration, as TermsVersion.Type
