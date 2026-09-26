@@ -177,10 +177,17 @@ def home_page_detail(request):
     if settings.DEFAULT_HOME_BLOCK:
         home_block = ContentBlock.objects.filter(pk=settings.DEFAULT_HOME_BLOCK).first()
 
+
+    sub_block = None
+    if settings.SUB_HOME_BLOCK:
+        sub_block = ContentBlock.objects.filter(pk=settings.SUB_HOME_BLOCK).first()
+
+
+
     return render(
         request,
         "partials/home.html",
-        {"featured_books": featured_books, "home_block": home_block},
+        {"featured_books": featured_books, "home_block": home_block, "sub_block": sub_block},
     )
 
 

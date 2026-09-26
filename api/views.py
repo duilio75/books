@@ -17,7 +17,9 @@ from .models import Note, BasicPage
 
 def basic_page_detail(request, url_alias):
     """Render a BasicPage as a full HTML page, looked up by its url_alias."""
-    page = get_object_or_404(BasicPage, url_alias=url_alias)
+    page = get_object_or_404(
+        BasicPage.objects.prefetch_related("content_faqs"), url_alias=url_alias
+    )
     return render(request, "partials/basic_page.html", {"page": page})
 
 
