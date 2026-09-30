@@ -41,6 +41,18 @@ class CookieConsent {
     const data = new FormData(form);
     if (event.submitter) data.set(event.submitter.name, event.submitter.value);
 
+    // form.submit() leaves out the clicked button, so carry its value along.
+    const fallback = () => {
+      if (event.submitter?.name) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = event.submitter.name;
+        input.value = event.submitter.value;
+        form.appendChild(input);
+      }
+      form.submit();
+    };
+
     let response;
     try {
       response = await fetch(form.action, {
@@ -50,11 +62,11 @@ class CookieConsent {
         credentials: "same-origin",
       });
     } catch {
-      form.submit();
+      fallback();
       return;
     }
     if (!response.ok) {
-      form.submit();
+      fallback();
       return;
     }
 

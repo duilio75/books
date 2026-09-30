@@ -12,7 +12,15 @@
     {% block meta_descri %}{% endblock meta_descri %}
     {% block meta_img %}{% endblock meta_img %}
     {% if cookie_consent.granted.analytics %}
-    <meta name="Generator" content="Duilio Devigus 11" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-744TYSS428"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+
+      gtag('config', 'G-744TYSS428');
+    </script>
     {% endif %}
     <link rel="icon" type="image/x-icon" href="{% static 'vendors/images/favicon.ico' %}">
     {% stylesheet_pack 'app' %}

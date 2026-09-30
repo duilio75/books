@@ -66,11 +66,11 @@ COOKIE_CONSENT_CATEGORIES = [
         "label": "Analytics",
         "description": "Help us understand how visitors use the site, so we can improve it.",
     },
-    {
-        "key": "marketing",
-        "label": "Marketing",
-        "description": "Used by third parties to show you personalised content and advertising.",
-    },
+    #{
+    #    "key": "marketing",
+    #    "label": "Marketing",
+    #    "description": "Used by third parties to show you personalised content and advertising.",
+    #},
 ]
 
 
