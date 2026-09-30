@@ -158,6 +158,7 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@example.com")
 
 # Primary key of the ContentBlock (api.models.ContentBlock) featured on the home page.
 DEFAULT_HOME_BLOCK = os.getenv("DEFAULT_HOME_BLOCK")
+SUB_HOME_BLOCK = os.getenv("SUB_HOME_BLOCK")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

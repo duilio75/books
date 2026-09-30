@@ -21,6 +21,7 @@ class BasicPage(models.Model):
         content_blocks = models.ManyToManyField(
             "ContentBlock", through="BasicPageContentBlock", related_name="pages", blank=True
         )
+        content_faqs = models.ManyToManyField("Faq", related_name="pages", blank=True)
         created_at = models.DateTimeField(auto_now_add=True)
         updated_at = models.DateTimeField(auto_now=True)
 
@@ -97,6 +98,15 @@ class BasicPageContentBlock(models.Model):
 
     def __str__(self):
         return f"{self.page} -> {self.content_block}"
+
+
+class Faq(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True)
+    answer = HTMLField()
+
+    def __str__(self):
+        return self.title
 
 
 class Gallery(models.Model):
