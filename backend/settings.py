@@ -160,6 +160,11 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@example.com")
 DEFAULT_HOME_BLOCK = os.getenv("DEFAULT_HOME_BLOCK")
 SUB_HOME_BLOCK = os.getenv("SUB_HOME_BLOCK")
 
+# Book search endpoint used by book.views.google_books_search
+BOOK_SEARCH_URL = os.getenv("BOOK_SEARCH_URL", "https://openlibrary.org/search.json")
+BOOK_SEARCH_K = int(os.getenv("BOOK_SEARCH_K", 20))
+BOOK_SEARCH_MODE = os.getenv("BOOK_SEARCH_MODE", "vector")
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     # Serve static files directly from gunicorn (no nginx needed)
