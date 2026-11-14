@@ -24,13 +24,13 @@ def google_books_search(request):
     if not query:
         return JsonResponse({"error": "Missing query"}, status=400)
     params = {
-        "title": query,
-        "limit": 8,
-        "fields": "key,title,author_name,cover_i,isbn,first_sentence",
+        "q": query,
+        "k": settings.BOOK_SEARCH_K,
+        "mode": settings.BOOK_SEARCH_MODE,
     }
     try:
         resp = session_with_retries().get(
-            "https://openlibrary.org/search.json",
+            settings.BOOK_SEARCH_URL,
             params=params,
             timeout=20,
         )
@@ -43,31 +43,43 @@ def google_books_search(request):
             status=resp.status_code,
         )
 
-    docs = resp.json().get("docs", [])
+    # The search service returns:
+    # {"results": [{"id", "title", "subtitle", "authors", "cover", "description",
+    #               "first_publish_date", "distance"}, ...],
+    #  "count", "query", "mode", "k", "took_ms"}
+    try:
+        data = resp.json()
+    except ValueError:
+        return JsonResponse({"error": {"message": "Invalid JSON from search service."}}, status=502)
+    docs = data.get("results") if isinstance(data, dict) else None
+    if not isinstance(docs, list):
+        return JsonResponse({"error": {"message": "Unexpected response from search service."}}, status=502)
 
     # single query — map volume key → url_alias for matched books
     volume_to_alias = {
         b.volume: b.url_alias
         for b in Book.objects.filter(
-            volume__in=[doc.get("key", "") for doc in docs]
+            volume__in=[doc.get("id", "") for doc in docs]
         ).only("volume", "url_alias")
     }
 
     items = []
     for doc in docs:
-        volume_id = doc.get("key", "")
-        isbns = doc.get("isbn", [])
-        cover_id = doc.get("cover_i")
-        first_sentences = doc.get("first_sentence", [])
+        volume_id = doc.get("id") or ""
+        cover_id = doc.get("cover")
+        # "authors" is a single display string (may be "" or contain commas,
+        # e.g. "Anderson, David J."), so it is not split.
+        authors = doc.get("authors") or []
+        if isinstance(authors, str):
+            authors = [authors.strip()] if authors.strip() else []
         items.append({
             "id": volume_id,
             "volumeInfo": {
-                "title": doc.get("title", ""),
-                "authors": doc.get("author_name", []),
-                "description": first_sentences[0] if first_sentences else "",
-                "industryIdentifiers": [
-                    {"type": "ISBN", "identifier": isbn} for isbn in isbns[:5]
-                ],
+                "title": doc.get("title") or "",
+                "authors": authors,
+                "description": doc.get("description") or "",
+                # the search service does not return ISBNs
+                "industryIdentifiers": [],
                 "imageLinks": (
                     {"thumbnail": f"https://covers.openlibrary.org/b/id/{cover_id}-M.jpg"}
                     if cover_id else {}
