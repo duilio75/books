@@ -18,7 +18,7 @@ MEDIA_VOLUME := tb-media
 BACKUP_DIR  := backup
 BACKUP_FILE := media.tgz
 
-.PHONY: build run serve up sh logs backup-media backup-media-dated restore-media save ship load
+.PHONY: build run serve up sh logs backup-media backup-media-dated restore-media save ship load status
 
 build:
 	docker build -t $(IMAGE) .
@@ -47,6 +47,7 @@ sh:
 #   make save                          -> $(DIST_DIR)/$(IMAGE_FILE)
 #   make ship                          -> save + scp + docker load + make serve on the server
 #   make load                          -> load a tarball on THIS machine
+#   make status                        -> is the server running the image built here?
 # .env is deliberately not in the image: copy the server's own .env separately.
 SSH_HOST   ?= root@46.224.39.153
 REMOTE_DIR ?= /home/manager/book
@@ -79,6 +80,23 @@ serve:
 		-v $(MEDIA_VOLUME):/app/media \
 		$(IMAGE) \
 		gunicorn backend.wsgi:application --bind 0.0.0.0:$(PORT) --workers 3
+
+# Check the container on $(SSH_HOST): running state, whether its image matches
+# the local build, the HTTP status on $(PORT) and the last log lines.
+status:
+	@test -n "$(SSH_HOST)" || { echo "Set SSH_HOST, e.g. make status SSH_HOST=user@server"; exit 1; }
+	@echo "== Container on $(SSH_HOST)"
+	@ssh $(SSH_HOST) 'docker ps -a --filter name=^/$(IMAGE)$$ --format "{{.Status}}  (created {{.CreatedAt}})"' | grep . || echo "No $(IMAGE) container found"
+	@echo "== Image"
+	@remote=$$(ssh $(SSH_HOST) 'docker inspect -f "{{.Image}}" $(IMAGE) 2>/dev/null'); \
+	 local=$$(docker inspect -f "{{.Id}}" $(IMAGE):latest 2>/dev/null); \
+	 echo "server: $${remote:-none}"; echo "local:  $${local:-none}"; \
+	 if [ -n "$$remote" ] && [ "$$remote" = "$$local" ]; then echo "OK: server runs the local build"; \
+	 else echo "MISMATCH: server is not running the local build"; fi
+	@echo "== HTTP on port $(PORT)"
+	@ssh $(SSH_HOST) 'curl -s -o /dev/null -w "%{http_code}\n" --max-time 5 http://localhost:$(PORT)/ || echo "no response"'
+	@echo "== Last log lines"
+	@ssh $(SSH_HOST) 'docker logs --tail 10 $(IMAGE) 2>&1' || true
 
 load:
 	@test -f $(DIST_DIR)/$(IMAGE_FILE) || { echo "No image at $(DIST_DIR)/$(IMAGE_FILE)"; exit 1; }
