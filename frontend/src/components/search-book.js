@@ -12,6 +12,10 @@ class BookSearch {
 
     this.form.addEventListener("submit", (e) => this.search(e));
 
+    // A review saved from a result card creates the book if it was missing:
+    // give that card its "View Book" button.
+    document.addEventListener("review:created", (e) => this.showViewButton(e.detail));
+
     // /search/?q=... renders the input pre-filled: run that search right away.
     if (this.input.value.trim()) this.runSearch();
   }
@@ -44,6 +48,27 @@ class BookSearch {
     }
   }
 
+  showViewButton(review) {
+    if (!review._url_alias) return;
+    const card = this.resultsEl.querySelector('[data-volume-id="' + CSS.escape(review.volume_id) + '"]');
+    if (!card || card.querySelector("[data-view-book]")) return;
+    const actions = card.querySelector("[data-actions]");
+    actions.outerHTML = this.renderActions(actions.innerHTML, review._url_alias);
+  }
+
+  // The card's bottom buttons: "Leave a Review" always, plus "View Book" once
+  // the book is in the library (urlAlias set).
+  renderActions(reviewBtn, urlAlias) {
+    if (!urlAlias) {
+      return '<span data-actions class="mt-auto flex rounded-b-lg overflow-hidden">' + reviewBtn + "</span>";
+    }
+    const viewBtn = '<a data-view-book href="/book/' + urlAlias + '/" class="flex-1 bg-blue-600 py-2 text-center text-xs font-semibold text-white hover:bg-blue-700">View Book</a>';
+    return '<span data-actions class="mt-auto flex flex-col divide-y divide-blue-500 rounded-b-lg overflow-hidden">'
+      + reviewBtn
+      + viewBtn
+      + "</span>";
+  }
+
   renderResult(item) {
     const info = item.volumeInfo;
     const thumb = info.imageLinks && info.imageLinks.thumbnail ? info.imageLinks.thumbnail : "";
@@ -57,14 +82,9 @@ class BookSearch {
     // data-book is ReviewDialog's trigger: the payload it carries is what
     // ReviewDialog.open() expects.
     const bookAttr = JSON.stringify({ volumeId, isbn, title, authors, coverUrl, description }).replace(/"/g, "&quot;");
-    const reviewBtn = '<button type="button" data-book="' + bookAttr + '" class="flex-1 bg-blue-100 py-2 text-center text-xs font-semibold text-gray-600 hover:bg-blue-200">Leave a Review</button>';
-    const btn = inDb
-      ? '<span class="mt-auto flex flex-col divide-y divide-blue-500 rounded-b-lg overflow-hidden">'
-        + reviewBtn
-        + '<a href="/book/' + item._url_alias + '/" class="flex-1 bg-blue-600 py-2 text-center text-xs font-semibold text-white hover:bg-blue-700">View Book</a>'
-        + "</span>"
-      : '<span class="mt-auto flex rounded-b-lg overflow-hidden">' + reviewBtn + "</span>";
-    return '<span class="flex flex-col overflow-hidden rounded-lg border ' + (inDb ? "border-green-400 ring-2 ring-green-300" : "border-gray-200") + ' bg-white shadow-sm">'
+    const reviewBtn = '<button type="button" data-book="' + bookAttr + '" class="flex-1 bg-blue-100 py-2 text-center text-xs font-semibold text-gray-600 cursor-pointer hover:bg-blue-200">Leave a Review</button>';
+    const btn = this.renderActions(reviewBtn, inDb ? item._url_alias : "");
+    return '<span data-volume-id="' + volumeId.replace(/"/g, "&quot;") + '" class="flex flex-col overflow-hidden rounded-lg border ' + (inDb ? "border-green-400 ring-2 ring-green-300" : "border-gray-200") + ' bg-white shadow-sm">'
       + '<span class="relative">'
       + (thumb
           ? '<img src="' + thumb + '" alt="' + title.replace(/"/g, "&quot;") + '" class="h-40 w-full object-cover" />'

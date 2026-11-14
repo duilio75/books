@@ -29,6 +29,11 @@ class ReviewDialog extends Dialog {
 
     this.form.addEventListener("submit", (e) => this.submit(e));
 
+    // Fires on every close: ×, Cancel, Close, Esc or close().
+    this.el.addEventListener("close", () => {
+      //console.log("Review dialog closed");
+    });
+
     this.starButtons.forEach((btn, i) => {
       btn.addEventListener("click", () => this.setStars(i + 1));
     });
@@ -108,6 +113,11 @@ class ReviewDialog extends Dialog {
       }
       this.form.classList.add("hidden");
       this.success.classList.remove("hidden");
+
+      // Let the page react, e.g. the search results add a "View Book" button
+      // now the book exists. detail is the saved review, including _url_alias.
+      const review = await res.json();
+      document.dispatchEvent(new CustomEvent("review:created", { detail: review }));
     } catch (throwError) {
       console.error(throwError);
       this.error.textContent = "Network error. Please try again.";

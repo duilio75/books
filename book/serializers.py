@@ -25,13 +25,16 @@ class BookReviewSerializer(serializers.ModelSerializer):
     # Always the user's id, or 0 when the review was left anonymously. Set from
     # request.user in the view, never from the payload.
     owner = serializers.IntegerField(source="owner_ref", read_only=True)
+    # The reviewed book's page slug (/book/<alias>/), named like the search
+    # results' _url_alias. The book may have just been created by this review.
+    _url_alias = serializers.CharField(source="book.url_alias", read_only=True)
 
     class Meta:
         model = BookReview
         fields = [
             "id", "book", "owner", "volume_id", "title", "author",
             "cover_url", "rating", "review_text", "created_at",
-            "description",
+            "description", "_url_alias",
         ]
         read_only_fields = ["id", "book", "owner", "created_at"]
 
