@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Book, BookLabel, BookTopic, Source, Edition
+from .models import Book, BookLabel, BookReview, BookTopic, Source, Edition
 
 
 class BookLabelInline(admin.TabularInline):
@@ -53,3 +53,14 @@ class EditionAdmin(admin.ModelAdmin):
     list_display = ("book", "format", "publisher", "isbn13", "isbn10", "publication_date")
     list_filter = ("format", "language")
     search_fields = ("isbn13", "isbn10", "publisher")
+
+
+@admin.register(BookReview)
+class BookReviewAdmin(admin.ModelAdmin):
+    list_display = ("title", "book", "owner", "rating", "created_at")
+    list_filter = ("rating", "created_at")
+    search_fields = ("title", "author", "volume_id", "review_text", "owner__username")
+    raw_id_fields = ("book", "owner")
+    list_select_related = ("book", "owner")
+    readonly_fields = ("created_at",)
+    date_hierarchy = "created_at"
