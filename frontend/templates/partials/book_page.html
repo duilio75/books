@@ -23,6 +23,7 @@
           <div>
             <h1 class="text-4xl font-bold text-gray-900 md:text-5xl">{{ book.title }}</h1>
             <p class="mt-4 text-lg text-gray-600">{{ book.author }}</p>
+            {% if book.published_year %}<p class="mt-1 text-sm text-gray-500">First published {{ book.published_year }}</p>{% endif %}
             {# data-book is ReviewDialog's trigger; description stays empty, the book already exists. #}
             <button
               type="button"

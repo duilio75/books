@@ -79,9 +79,10 @@ class BookSearch {
     const volumeId = item.id || "";
     const isbn = (info.industryIdentifiers || []).map((x) => x.identifier).join(",");
     const coverUrl = thumb;
+    const publishedDate = info.publishedDate || "";
     // data-book is ReviewDialog's trigger: the payload it carries is what
     // ReviewDialog.open() expects.
-    const bookAttr = JSON.stringify({ volumeId, isbn, title, authors, coverUrl, description }).replace(/"/g, "&quot;");
+    const bookAttr = JSON.stringify({ volumeId, isbn, title, authors, coverUrl, description, publishedDate }).replace(/"/g, "&quot;");
     const reviewBtn = '<button type="button" data-book="' + bookAttr + '" class="flex-1 bg-blue-100 py-2 text-center text-xs font-semibold text-gray-600 cursor-pointer hover:bg-blue-200">Leave a Review</button>';
     const btn = this.renderActions(reviewBtn, inDb ? item._url_alias : "");
     return '<span data-volume-id="' + volumeId.replace(/"/g, "&quot;") + '" class="flex flex-col overflow-hidden rounded-lg border ' + (inDb ? "border-green-400 ring-2 ring-green-300" : "border-gray-200") + ' bg-white shadow-sm">'

@@ -47,7 +47,7 @@ class ReviewDialog extends Dialog {
     });
   }
 
-  // book: { volumeId, isbn, title, authors, coverUrl, description }
+  // book: { volumeId, isbn, title, authors, coverUrl, description, publishedDate }
   open(book) {
     this.$("#rdlg-title").textContent = book.title || "";
     this.$("#rdlg-author").textContent = book.authors || "";
@@ -62,6 +62,7 @@ class ReviewDialog extends Dialog {
     this.$("#rdlg-book-author").value = book.authors || "";
     this.$("#rdlg-book-description").value = book.description || "";
     this.$("#rdlg-book-cover").value = book.coverUrl || "";
+    this.$("#rdlg-book-published").value = book.publishedDate || "";
     this.$("#rdlg-text").value = "";
 
     this.error.textContent = "";
@@ -96,6 +97,7 @@ class ReviewDialog extends Dialog {
       author: this.$("#rdlg-book-author").value,
       cover_url: this.$("#rdlg-book-cover").value,
       description: this.$("#rdlg-book-description").value,
+      published_date: this.$("#rdlg-book-published").value,
       rating: rating,
       review_text: reviewText,
     };

@@ -22,6 +22,8 @@ class SourceSerializer(serializers.ModelSerializer):
 
 class BookReviewSerializer(serializers.ModelSerializer):
     description = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    # Year from the search results (e.g. "1991"), used to fill Book.published_year.
+    published_date = serializers.CharField(write_only=True, required=False, allow_blank=True)
     # Always the user's id, or 0 when the review was left anonymously. Set from
     # request.user in the view, never from the payload.
     owner = serializers.IntegerField(source="owner_ref", read_only=True)
@@ -34,7 +36,7 @@ class BookReviewSerializer(serializers.ModelSerializer):
         fields = [
             "id", "book", "owner", "volume_id", "title", "author",
             "cover_url", "rating", "review_text", "created_at",
-            "description", "_url_alias",
+            "description", "published_date", "_url_alias",
         ]
         read_only_fields = ["id", "book", "owner", "created_at"]
 

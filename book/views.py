@@ -1,3 +1,5 @@
+import re
+
 import requests
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -46,6 +48,7 @@ def google_books_search(request):
     # The search service returns:
     # {"results": [{"id", "title", "subtitle", "authors", "cover", "description",
     #               "first_publish_date", "distance"}, ...],
+    # first_publish_date is passed on as volumeInfo.publishedDate.
     #  "count", "query", "mode", "k", "took_ms"}
     try:
         data = resp.json()
@@ -78,6 +81,8 @@ def google_books_search(request):
                 "title": doc.get("title") or "",
                 "authors": authors,
                 "description": doc.get("description") or "",
+                # Year only (e.g. "1991") and often null; "" when missing.
+                "publishedDate": doc.get("first_publish_date") or "",
                 # the search service does not return ISBNs
                 "industryIdentifiers": [],
                 "imageLinks": (
@@ -102,6 +107,9 @@ class BookReviewCreate(generics.CreateAPIView):
     def perform_create(self, serializer):
         data = serializer.validated_data
         description = data.pop("description", "")
+        # "1991" or "Mar 3, 1991" -> 1991; None if there is no 4-digit year.
+        year = re.search(r"\b(\d{4})\b", data.pop("published_date", ""))
+        published_year = int(year.group(1)) if year else None
         book, _ = Book.objects.get_or_create(
             volume=data.get("volume_id", ""),
             defaults={
@@ -109,8 +117,13 @@ class BookReviewCreate(generics.CreateAPIView):
                 "author": data.get("author", ""),
                 "cover_url": data.get("cover_url", ""),
                 "description": description,
+                "published_year": published_year,
             },
         )
+        # A book created before years were recorded gets one from a later review.
+        if book.published_year is None and published_year:
+            book.published_year = published_year
+            book.save(update_fields=["published_year"])
         user = self.request.user
         serializer.save(book=book, owner=user if user.is_authenticated else None)
 
