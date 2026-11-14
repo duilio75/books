@@ -45,10 +45,10 @@ sh:
 # ---- Ship the image to the server (no registry needed) ---------------------
 # The image is saved to a gzipped tarball, copied over SSH and loaded there:
 #   make save                          -> $(DIST_DIR)/$(IMAGE_FILE)
-#   make ship SSH_HOST=user@server     -> save + scp + docker load + make serve on the server
+#   make ship                          -> save + scp + docker load + make serve on the server
 #   make load                          -> load a tarball on THIS machine
 # .env is deliberately not in the image: copy the server's own .env separately.
-SSH_HOST   ?= 
+SSH_HOST   ?= root@46.224.39.153
 REMOTE_DIR ?= /home/manager/book
 DIST_DIR   := dist
 IMAGE_FILE := tb-backend.tgz
